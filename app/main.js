@@ -336,6 +336,22 @@ if (countables.length && !prefersReduced) {
   countables.forEach((el) => io.observe(el));
 }
 
+/* ---------- מחשבון יעד חלבון ---------- */
+
+const calcInput = document.getElementById("calc-w");
+const calcOut = document.getElementById("calc-out");
+
+if (calcInput && calcOut) {
+  calcInput.addEventListener("input", () => {
+    const w = parseFloat(calcInput.value);
+    if (!Number.isFinite(w) || w < 30 || w > 300) {
+      calcOut.textContent = calcInput.value ? "הזינו משקל בין 30 ל-300 ק״ג." : "";
+      return;
+    }
+    calcOut.textContent = `בין ${Math.round(w * 1.6)} ל-${Math.round(w * 2.2)} גרם חלבון ביום.`;
+  });
+}
+
 /* ---------- כפתורים מגנטיים ---------- */
 
 if (!prefersReduced && canHover) {

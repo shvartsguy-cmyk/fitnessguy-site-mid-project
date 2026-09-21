@@ -82,6 +82,14 @@
     </div>
   </section>
 
+  <section class="stats">
+    <div class="wrap stats-in">
+      <div><strong data-count>8+</strong><span>שנים בשוק</span></div>
+      <div><strong>אלפי</strong><span>מתאמנים לוו עד היום</span></div>
+      <div><strong data-count>2–3</strong><span>מאמנים בלבד, במכוון</span></div>
+    </div>
+  </section>
+
   <section id="method">
     <div class="wrap">
       <h2 class="method-head">מה אנחנו מודדים, ומה אנחנו מסרבים למכור</h2>
@@ -90,7 +98,13 @@
       <dl class="specs">
         <div class="spec">
           <dt data-count>1.6–2.2 ג׳</dt>
-          <dd>חלבון לכל ק״ג משקל גוף ביום, לפי הנחיות ה-ISSN. <b>צריכה מעבר לזה לא בונה שריר נוסף</b> — היא רק פוגעת בתיאבון.</dd>
+          <dd>חלבון לכל ק״ג משקל גוף ביום, לפי הנחיות ה-ISSN. <b>צריכה מעבר לזה לא בונה שריר נוסף</b> — היא רק פוגעת בתיאבון.
+            <div class="calc">
+              <label for="calc-w">חשבו את היעד שלכם — משקל גוף בק״ג</label>
+              <input id="calc-w" type="number" inputmode="decimal" min="30" max="300" step="0.5" placeholder="70">
+              <p class="calc-out" id="calc-out" aria-live="polite"></p>
+            </div>
+          </dd>
         </div>
         <div class="spec">
           <dt data-count>7–8 שעות</dt>
