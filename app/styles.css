@@ -975,3 +975,17 @@ header.nav, main, footer.foot {
 .hero {
   position: relative;
 }
+
+.nav-toggle { display: none; background: none; border: 1px solid var(--iron-lo); padding: .6rem .7rem; cursor: pointer; }
+.nav-toggle-bars, .nav-toggle-bars::before, .nav-toggle-bars::after { display: block; width: 20px; height: 2px; background: var(--bone); content: ""; }
+.nav-toggle-bars::before { transform: translateY(-6px); }
+.nav-toggle-bars::after { transform: translateY(4px); }
+.nav-panel { display: grid; gap: .25rem; padding: .5rem var(--gut) 1.25rem; border-top: var(--rule); }
+.nav-panel a { display: block; padding: .7rem 0; text-decoration: none; color: var(--bone); border-bottom: var(--rule); }
+
+@media (max-width: 860px) {
+  .nav-toggle { display: block; }
+}
+@media (min-width: 861px) {
+  .nav-panel { display: none !important; }
+}

@@ -218,3 +218,25 @@ async function submitLead(payload) {
   const [track, why] = GOAL_TRACK[payload.goal] || GOAL_TRACK.unsure;
   return { track, why };
 }
+
+/* ---------- ניווט נייד ---------- */
+
+const navToggle = document.getElementById("nav-toggle");
+const navPanel = document.getElementById("nav-panel");
+
+if (navToggle && navPanel) {
+  const setNav = (open) => {
+    navPanel.hidden = !open;
+    navToggle.setAttribute("aria-expanded", String(open));
+  };
+  navToggle.addEventListener("click", () => setNav(navPanel.hidden));
+  navPanel.addEventListener("click", (e) => {
+    if (e.target.tagName === "A") setNav(false);
+  });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !navPanel.hidden) {
+      setNav(false);
+      navToggle.focus();
+    }
+  });
+}
