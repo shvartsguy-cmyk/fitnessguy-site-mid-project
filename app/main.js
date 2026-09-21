@@ -10,6 +10,12 @@ const ENDPOINTS = {
   leadStatus: null, // נקודת polling לתוצאת ההתאמה
 };
 
+/* דגלים גלובליים שמשמשים כמה סקציות בהמשך הקובץ (מסך טעינה, זרקור, גרף,
+ * ספירה עולה, כפתורים מגנטיים) — מוצהרים כאן למעלה כדי שסדר השימוש בקובץ
+ * יהיה ברור מהמבנה, ולא רק "בטוח" בזכות hoisting/timing של load handlers. */
+const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const canHover = window.matchMedia("(hover: hover)").matches;
+
 /* ---------- מזהה שיחה יציב, נפרד לגמרי מטלגרם ---------- */
 
 function sessionId() {
@@ -284,9 +290,6 @@ if (navToggle && navPanel) {
 
 /* ---------- זרקור עכבר וגרף מקושר לגלילה ---------- */
 
-const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-const canHover = window.matchMedia("(hover: hover)").matches;
-
 if (!prefersReduced && canHover) {
   document.querySelectorAll(".spot").forEach((spot) => {
     const host = spot.parentElement;
@@ -312,6 +315,7 @@ const chartBreak = document.querySelector(".track-break");
 const heroEl = document.querySelector(".hero");
 
 if (chartBreak && heroEl) {
+  // Must stay in sync with `stroke-dasharray: 260` on .chart .track-break in styles.css.
   const LEN = 260;
   if (prefersReduced) {
     chartBreak.style.strokeDashoffset = "0";
@@ -353,6 +357,8 @@ function animateCount(el) {
       return value;
     });
     if (t < 1) requestAnimationFrame(frame);
+    // Load-bearing hard overwrite: masks floating-point imprecision in the easing
+    // function at t=1 so ranges like "1.6–2.2" land back on their exact original text.
     else el.textContent = original;
   };
   requestAnimationFrame(frame);

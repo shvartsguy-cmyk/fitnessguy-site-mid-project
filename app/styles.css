@@ -305,6 +305,7 @@ section {
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
+  /* Must stay in sync with the `LEN` constant in main.js. */
   stroke-dasharray: 260;
 }
 
@@ -363,7 +364,7 @@ section {
 .stats { padding-block: clamp(2rem, 4vw, 3rem); border-bottom: var(--rule); background: var(--base-deep); }
 .stats-in { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
 .stats-in div { display: grid; gap: .3rem; }
-.stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); color: var(--accent); }
+.stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); color: var(--bone); }
 .stats-in span { color: var(--bone-dim); font-size: .95rem; }
 @media (max-width: 640px) { .stats-in { grid-template-columns: 1fr; } }
 
