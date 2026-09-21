@@ -296,3 +296,56 @@ if (chartBreak && heroEl) {
     paint();
   }
 }
+
+/* ---------- ספירה עולה למספרים בסקציית השיטה ---------- */
+
+function animateCount(el) {
+  const original = el.textContent;
+  const found = original.match(/\d+(\.\d+)?/g);
+  if (!found) return;
+  const targets = found.map(Number);
+  const decimals = found.map((n) => (n.split(".")[1] || "").length);
+  const DUR = 900;
+  const start = performance.now();
+
+  const frame = (now) => {
+    const t = Math.min((now - start) / DUR, 1);
+    const eased = 1 - Math.pow(2, -10 * t);
+    let i = 0;
+    el.textContent = original.replace(/\d+(\.\d+)?/g, () => {
+      const value = (targets[i] * eased).toFixed(decimals[i]);
+      i++;
+      return value;
+    });
+    if (t < 1) requestAnimationFrame(frame);
+    else el.textContent = original;
+  };
+  requestAnimationFrame(frame);
+}
+
+const countables = document.querySelectorAll("[data-count]");
+if (countables.length && !prefersReduced) {
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        animateCount(entry.target);
+        io.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.4 });
+  countables.forEach((el) => io.observe(el));
+}
+
+/* ---------- כפתורים מגנטיים ---------- */
+
+if (!prefersReduced && canHover) {
+  document.querySelectorAll(".btn-primary, .btn-ghost").forEach((btn) => {
+    btn.addEventListener("pointermove", (e) => {
+      const r = btn.getBoundingClientRect();
+      const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
+      const dy = (e.clientY - (r.top + r.height / 2)) / (r.height / 2);
+      btn.style.transform = `translate(${dx * 4}px, ${dy * 4}px)`;
+    });
+    btn.addEventListener("pointerleave", () => { btn.style.transform = ""; });
+  });
+}

@@ -457,11 +457,30 @@ section {
 }
 
 .track {
+  position: relative;
   background: var(--base);
   padding: clamp(1.6rem, 3.5vw, 2.4rem);
   display: grid;
   gap: 0.9rem;
   align-content: start;
+}
+
+.track::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  background: linear-gradient(120deg, transparent 30%, rgba(19, 227, 230, 0.35) 50%, transparent 70%);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  padding: 1px;
+}
+
+.track:hover::after {
+  opacity: 1;
 }
 
 .track-price {
@@ -958,6 +977,15 @@ section {
   .anim .annot-hi,
   .anim .annot-lo {
     opacity: 1;
+  }
+
+  .track::after {
+    display: none;
+  }
+
+  .btn-primary,
+  .btn-ghost {
+    transform: none !important;
   }
 }
 
