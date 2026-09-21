@@ -30,12 +30,14 @@ function sessionId() {
 
 const loader = document.getElementById("loader");
 
-window.addEventListener("load", () => {
-  setTimeout(() => {
-    loader.classList.add("done");
-    setTimeout(() => loader.remove(), 600);
-  }, 700);
-});
+if (loader) {
+  window.addEventListener("load", () => {
+    setTimeout(() => {
+      loader.classList.add("done");
+      setTimeout(() => loader.remove(), 600);
+    }, 700);
+  });
+}
 
 /* ---------- צ'אט ---------- */
 
@@ -46,61 +48,63 @@ const chatInput = document.getElementById("chat-input");
 const chatOpenBtn = document.getElementById("chat-open");
 let lastFocus = null;
 
-function addMessage(text, who) {
-  const el = document.createElement("div");
-  el.className = "msg " + (who === "me" ? "msg-me" : "msg-bot");
-  el.textContent = text;
-  chatLog.appendChild(el);
-  chatLog.scrollTop = chatLog.scrollHeight;
-  return el;
-}
-
-function openChat() {
-  lastFocus = document.activeElement;
-  chat.hidden = false;
-  chatOpenBtn.hidden = true;
-  if (!chatLog.childElementCount) {
-    addMessage(
-      "שלום! אני FitnessBot. אפשר לשאול אותי על מסלולים ומחירים, מדיניות ביטול והקפאה, תזונה ותוספים, או טכניקה של תרגילים.",
-      "bot"
-    );
+if (chat && chatForm) {
+  function addMessage(text, who) {
+    const el = document.createElement("div");
+    el.className = "msg " + (who === "me" ? "msg-me" : "msg-bot");
+    el.textContent = text;
+    chatLog.appendChild(el);
+    chatLog.scrollTop = chatLog.scrollHeight;
+    return el;
   }
-  chatInput.focus();
-}
 
-function closeChat() {
-  chat.hidden = true;
-  chatOpenBtn.hidden = false;
-  if (lastFocus) lastFocus.focus();
-}
-
-document
-  .querySelectorAll("[data-chat-open]")
-  .forEach((b) => b.addEventListener("click", openChat));
-
-document.getElementById("chat-close").addEventListener("click", closeChat);
-
-document.addEventListener("keydown", (e) => {
-  if (e.key === "Escape" && !chat.hidden) closeChat();
-});
-
-chatForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const text = chatInput.value.trim();
-  if (!text) return;
-
-  addMessage(text, "me");
-  chatInput.value = "";
-  const thinking = addMessage("…", "bot");
-
-  try {
-    const reply = await askBot(text);
-    thinking.textContent = reply;
-  } catch {
-    thinking.textContent =
-      "לא הצלחתי להתחבר כרגע. אפשר לנסות שוב, או לפנות אלינו בוואטסאפ 054-3035040.";
+  function openChat() {
+    lastFocus = document.activeElement;
+    chat.hidden = false;
+    chatOpenBtn.hidden = true;
+    if (!chatLog.childElementCount) {
+      addMessage(
+        "שלום! אני FitnessBot. אפשר לשאול אותי על מסלולים ומחירים, מדיניות ביטול והקפאה, תזונה ותוספים, או טכניקה של תרגילים.",
+        "bot"
+      );
+    }
+    chatInput.focus();
   }
-});
+
+  function closeChat() {
+    chat.hidden = true;
+    chatOpenBtn.hidden = false;
+    if (lastFocus) lastFocus.focus();
+  }
+
+  document
+    .querySelectorAll("[data-chat-open]")
+    .forEach((b) => b.addEventListener("click", openChat));
+
+  document.getElementById("chat-close").addEventListener("click", closeChat);
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && !chat.hidden) closeChat();
+  });
+
+  chatForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    addMessage(text, "me");
+    chatInput.value = "";
+    const thinking = addMessage("…", "bot");
+
+    try {
+      const reply = await askBot(text);
+      thinking.textContent = reply;
+    } catch {
+      thinking.textContent =
+        "לא הצלחתי להתחבר כרגע. אפשר לנסות שוב, או לפנות אלינו בוואטסאפ 054-3035040.";
+    }
+  });
+}
 
 /* נקודת מגע 1 עם השרת.
  * חוזה: POST { session_id, message } → { reply }
@@ -148,48 +152,50 @@ const GOAL_TRACK = {
   unsure: ["The Foundation", "נתחיל משיחת אפיון ותוכנית ראשונית. משם נדע אם יש טעם להמשיך לליווי חודשי."],
 };
 
-leadForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  formErr.hidden = true;
+if (leadForm) {
+  leadForm.addEventListener("submit", async (e) => {
+    e.preventDefault();
+    formErr.hidden = true;
 
-  const data = Object.fromEntries(new FormData(leadForm));
+    const data = Object.fromEntries(new FormData(leadForm));
 
-  if (!data.name || !data.phone || !data.email || !data.goal) {
-    return fail("צריך למלא שם, טלפון, אימייל ומטרה.");
+    if (!data.name || !data.phone || !data.email || !data.goal) {
+      return fail("צריך למלא שם, טלפון, אימייל ומטרה.");
+    }
+    if (!/^0\d{1,2}-?\d{7}$/.test(String(data.phone).replace(/\s/g, ""))) {
+      return fail("מספר הטלפון לא נראה תקין. פורמט לדוגמה: 050-0000000");
+    }
+    if (!leadForm.privacy.checked) {
+      return fail("צריך לאשר את מדיניות הפרטיות כדי לשלוח.");
+    }
+
+    leadForm.hidden = true;
+    pending.hidden = false;
+
+    try {
+      const match = await submitLead({
+        ...data,
+        marketing: leadForm.marketing.checked,
+        session_id: sessionId(),
+      });
+      pending.hidden = true;
+      result.hidden = false;
+      document.getElementById("result-title").textContent =
+        "המסלול שמתאים לכם: " + match.track;
+      document.getElementById("result-body").textContent = match.why;
+      result.scrollIntoView({ block: "center" });
+    } catch {
+      pending.hidden = true;
+      leadForm.hidden = false;
+      fail("השליחה נכשלה. אפשר לנסות שוב, או לפנות בוואטסאפ 054-3035040.");
+    }
+  });
+
+  function fail(msg) {
+    formErr.textContent = msg;
+    formErr.hidden = false;
+    formErr.scrollIntoView({ block: "center" });
   }
-  if (!/^0\d{1,2}-?\d{7}$/.test(String(data.phone).replace(/\s/g, ""))) {
-    return fail("מספר הטלפון לא נראה תקין. פורמט לדוגמה: 050-0000000");
-  }
-  if (!leadForm.privacy.checked) {
-    return fail("צריך לאשר את מדיניות הפרטיות כדי לשלוח.");
-  }
-
-  leadForm.hidden = true;
-  pending.hidden = false;
-
-  try {
-    const match = await submitLead({
-      ...data,
-      marketing: leadForm.marketing.checked,
-      session_id: sessionId(),
-    });
-    pending.hidden = true;
-    result.hidden = false;
-    document.getElementById("result-title").textContent =
-      "המסלול שמתאים לכם: " + match.track;
-    document.getElementById("result-body").textContent = match.why;
-    result.scrollIntoView({ block: "center" });
-  } catch {
-    pending.hidden = true;
-    leadForm.hidden = false;
-    fail("השליחה נכשלה. אפשר לנסות שוב, או לפנות בוואטסאפ 054-3035040.");
-  }
-});
-
-function fail(msg) {
-  formErr.textContent = msg;
-  formErr.hidden = false;
-  formErr.scrollIntoView({ block: "center" });
 }
 
 /* נקודת מגע 2 עם השרת.
