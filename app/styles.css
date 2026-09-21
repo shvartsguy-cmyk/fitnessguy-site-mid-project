@@ -1076,7 +1076,7 @@ header.nav, main, footer.foot {
 
 @view-transition { navigation: auto; }
 
-.brand img { view-transition-name: brand; }
+.nav .brand img { view-transition-name: brand; }
 
 @media (prefers-reduced-motion: reduce) {
   @view-transition { navigation: none; }
