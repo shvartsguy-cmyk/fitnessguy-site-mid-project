@@ -34,8 +34,8 @@ if (loader) {
   window.addEventListener("load", () => {
     setTimeout(() => {
       loader.classList.add("done");
-      setTimeout(() => loader.remove(), 600);
-    }, 700);
+      setTimeout(() => loader.remove(), prefersReduced ? 0 : 600);
+    }, prefersReduced ? 0 : 700);
   });
 }
 
@@ -245,4 +245,54 @@ if (navToggle && navPanel) {
       navToggle.focus();
     }
   });
+}
+
+/* ---------- זרקור עכבר וגרף מקושר לגלילה ---------- */
+
+const prefersReduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+const canHover = window.matchMedia("(hover: hover)").matches;
+
+if (!prefersReduced && canHover) {
+  document.querySelectorAll(".spot").forEach((spot) => {
+    const host = spot.parentElement;
+    let queued = false;
+    host.addEventListener("pointermove", (e) => {
+      const x = e.clientX;
+      const y = e.clientY;
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(() => {
+        const r = host.getBoundingClientRect();
+        spot.style.setProperty("--mx", x - r.left + "px");
+        spot.style.setProperty("--my", y - r.top + "px");
+        spot.classList.add("is-live");
+        queued = false;
+      });
+    });
+    host.addEventListener("pointerleave", () => spot.classList.remove("is-live"));
+  });
+}
+
+const chartBreak = document.querySelector(".track-break");
+const heroEl = document.querySelector(".hero");
+
+if (chartBreak && heroEl) {
+  const LEN = 260;
+  if (prefersReduced) {
+    chartBreak.style.strokeDashoffset = "0";
+  } else {
+    let queued = false;
+    const paint = () => {
+      const r = heroEl.getBoundingClientRect();
+      const travelled = Math.min(Math.max(-r.top / (r.height * 0.6), 0), 1);
+      chartBreak.style.strokeDashoffset = String(LEN * (1 - travelled));
+      queued = false;
+    };
+    addEventListener("scroll", () => {
+      if (queued) return;
+      queued = true;
+      requestAnimationFrame(paint);
+    }, { passive: true });
+    paint();
+  }
 }

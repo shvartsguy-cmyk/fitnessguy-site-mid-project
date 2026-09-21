@@ -222,6 +222,24 @@ section {
   border-bottom: var(--rule);
 }
 
+.hero, .bot {
+  position: relative;
+  overflow: hidden;
+}
+
+.spot {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(19, 227, 230, .07), transparent 65%);
+  opacity: 0;
+  transition: opacity .35s ease;
+}
+
+.spot.is-live {
+  opacity: 1;
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
@@ -287,6 +305,7 @@ section {
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
+  stroke-dasharray: 260;
 }
 
 .chart .pip {
@@ -309,12 +328,6 @@ section {
   stroke-dasharray: 460;
   stroke-dashoffset: 460;
   animation: draw 1.5s cubic-bezier(0.4, 0, 0.3, 1) 0.45s forwards;
-}
-
-.anim .track-break {
-  stroke-dasharray: 260;
-  stroke-dashoffset: 260;
-  animation: draw 0.85s cubic-bezier(0.5, 0, 0.2, 1) 2.45s forwards;
 }
 
 .anim .pip,
