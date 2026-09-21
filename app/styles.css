@@ -1057,3 +1057,11 @@ header.nav, main, footer.foot {
 @media (max-width: 760px) {
   .tech-grid { grid-template-columns: 1fr; }
 }
+
+@view-transition { navigation: auto; }
+
+.brand img { view-transition-name: brand; }
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+}
