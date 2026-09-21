@@ -1010,7 +1010,41 @@ The `startsWith` check is the security boundary: any other href is dropped silen
 
 - [ ] **Step 2: Update askBot to return the object shape**
 
-Change `askBot` so both branches return `{ reply, link }`. The real branch returns the parsed JSON body as-is. In the mock branch, add technique matching before the existing keyword checks:
+`askBot` currently has one branch that fetches from `ENDPOINTS.chat` and returns `data.reply`, and a mock branch with five `if (q.includes(...))` checks each returning a plain string, plus a final fallback string. **Every one of these return points changes shape to `{ reply, link }`.** Missing even one turns that reply into a literal "undefined" bubble in the chat, because Task 11's Step 1 reads `payload.reply`.
+
+First, the real branch — replace:
+
+```js
+    const data = await res.json();
+    return data.reply;
+```
+
+with:
+
+```js
+    const data = await res.json();
+    return data;
+```
+
+(The server response already matches `{ reply, link? }`, so it is returned as-is.)
+
+Second, the five existing mock branches — wrap each existing return value as an object. For example, the price branch changes from:
+
+```js
+  if (q.includes("מחיר") || q.includes("עולה") || q.includes("כמה"))
+    return "שלושה מסלולים: Foundation ב-450 ₪ חד־פעמי, Builder ב-550 ₪ לחודש ללא התחייבות, ו-Plateau Breaker ב-1,200 ₪ לחודש במינימום 3 חודשים.";
+```
+
+to:
+
+```js
+  if (q.includes("מחיר") || q.includes("עולה") || q.includes("כמה"))
+    return { reply: "שלושה מסלולים: Foundation ב-450 ₪ חד־פעמי, Builder ב-550 ₪ לחודש ללא התחייבות, ו-Plateau Breaker ב-1,200 ₪ לחודש במינימום 3 חודשים." };
+```
+
+Apply the identical `return "X"` → `return { reply: "X" }` wrap to the protein branch (`חלבון`), the creatine branch (`קריאטין`), the cancellation branch (`ביטול`/`להקפיא`/`הקפאה`), the home-gym branch (`בית`/`ביתי`), and the final fallback return at the bottom of the function (the "זו שאלה טובה..." message referring users to WhatsApp). None of these five gain a `link` — only the new exercise branch below does.
+
+Third, add technique matching as a new branch, placed before the five existing keyword checks so an exercise question is not swallowed by a broader keyword first:
 
 ```js
 const EXERCISE_HINTS = [
@@ -1037,6 +1071,8 @@ if (hit) {
 ```
 
 Order matters: "דדליפט רומני" must be tested before "דדליפט", otherwise every RDL question routes to the conventional deadlift.
+
+**Step 4's verification below only passes if all seven return points (real branch, five wrapped mocks, fallback) were updated** — not just the new exercise branch.
 
 - [ ] **Step 3: Style the link**
 
