@@ -97,13 +97,26 @@ if (chat && chatForm) {
     const thinking = addMessage("…", "bot");
 
     try {
-      const reply = await askBot(text);
-      thinking.textContent = reply;
+      const payload = await askBot(text);
+      renderReply(thinking, payload);
     } catch {
       thinking.textContent =
         "לא הצלחתי להתחבר כרגע. אפשר לנסות שוב, או לפנות אלינו בוואטסאפ 054-3035040.";
     }
   });
+}
+
+function renderReply(bubble, payload) {
+  bubble.textContent = payload.reply;
+  const link = payload.link;
+  if (link && typeof link.href === "string" && link.href.startsWith("technique.html#")) {
+    const a = document.createElement("a");
+    a.href = link.href;
+    a.textContent = link.label || "לצפייה בתרגיל";
+    a.className = "msg-link";
+    bubble.appendChild(document.createElement("br"));
+    bubble.appendChild(a);
+  }
 }
 
 /* נקודת מגע 1 עם השרת.
@@ -118,24 +131,46 @@ async function askBot(message) {
     });
     if (!res.ok) throw new Error("bad response");
     const data = await res.json();
-    return data.reply;
+    return data;
   }
 
   await new Promise((r) => setTimeout(r, 750));
   const q = message.toLowerCase();
 
-  if (q.includes("מחיר") || q.includes("עולה") || q.includes("כמה"))
-    return "שלושה מסלולים: Foundation ב-450 ₪ חד־פעמי, Builder ב-550 ₪ לחודש ללא התחייבות, ו-Plateau Breaker ב-1,200 ₪ לחודש במינימום 3 חודשים.";
-  if (q.includes("חלבון"))
-    return "היעד שלנו הוא 1.6 עד 2.2 גרם חלבון לכל ק״ג משקל גוף ביום, לפי הנחיות ה-ISSN. צריכה מעבר לזה לא בונה שריר נוסף.";
-  if (q.includes("קריאטין"))
-    return "אנחנו ממליצים על קריאטין מונוהידראט, 3 עד 5 גרם ביום, בצריכה קבועה וללא שלבי העמסה.";
-  if (q.includes("ביטול") || q.includes("להקפיא") || q.includes("הקפאה"))
-    return "ביטול מתבצע בהודעה בכתב 14 ימי עסקים לפני החיוב הבא, לאחר תום ההתחייבות. הקפאה אפשרית עד 21 ימים רצופים, פעם אחת בחצי שנה.";
-  if (q.includes("בית") || q.includes("ביתי"))
-    return "הליווי דורש מנוי פעיל לחדר כושר מסודר. התוכניות בנויות על עומס יסף מכני שמחייב ציוד מלא, ולכן הן לא מותאמות לאימונים ביתיים.";
+  const EXERCISE_HINTS = [
+    ["סקוואט", "back-squat", "סקוואט אחורי"],
+    ["דדליפט רומני", "rdl", "דדליפט רומני"],
+    ["דדליפט", "deadlift", "דדליפט קונבנציונלי"],
+    ["לחיצת חזה", "bench-press", "לחיצת חזה"],
+    ["כתפיים", "overhead-press", "לחיצת כתפיים"],
+    ["חתירה", "barbell-row", "חתירה עם מוט"],
+    ["מתח", "lat-pulldown", "מתח ומשיכת פולי עליון"],
+    ["פולי", "lat-pulldown", "מתח ומשיכת פולי עליון"],
+    ["היפ תראסט", "hip-thrust", "היפ תראסט"],
+    ["לחיצת רגליים", "leg-press", "לחיצת רגליים"],
+    ["לאנג", "lunge", "לאנג' הליכה"],
+  ];
 
-  return "זו שאלה טובה, ואין לי עליה תשובה מדויקת במאגר. אפשר לפנות לצוות המנטורים בוואטסאפ: 054-3035040.";
+  const hit = EXERCISE_HINTS.find(([word]) => message.includes(word));
+  if (hit) {
+    return {
+      reply: `יש לנו מדריך טכניקה מלא ל${hit[2]}, כולל רמזי ביצוע, טעויות נפוצות והבסיס המחקרי.`,
+      link: { href: `technique.html#${hit[1]}`, label: "לצפייה במדריך" },
+    };
+  }
+
+  if (q.includes("מחיר") || q.includes("עולה") || q.includes("כמה"))
+    return { reply: "שלושה מסלולים: Foundation ב-450 ₪ חד־פעמי, Builder ב-550 ₪ לחודש ללא התחייבות, ו-Plateau Breaker ב-1,200 ₪ לחודש במינימום 3 חודשים." };
+  if (q.includes("חלבון"))
+    return { reply: "היעד שלנו הוא 1.6 עד 2.2 גרם חלבון לכל ק״ג משקל גוף ביום, לפי הנחיות ה-ISSN. צריכה מעבר לזה לא בונה שריר נוסף." };
+  if (q.includes("קריאטין"))
+    return { reply: "אנחנו ממליצים על קריאטין מונוהידראט, 3 עד 5 גרם ביום, בצריכה קבועה וללא שלבי העמסה." };
+  if (q.includes("ביטול") || q.includes("להקפיא") || q.includes("הקפאה"))
+    return { reply: "ביטול מתבצע בהודעה בכתב 14 ימי עסקים לפני החיוב הבא, לאחר תום ההתחייבות. הקפאה אפשרית עד 21 ימים רצופים, פעם אחת בחצי שנה." };
+  if (q.includes("בית") || q.includes("ביתי"))
+    return { reply: "הליווי דורש מנוי פעיל לחדר כושר מסודר. התוכניות בנויות על עומס יסף מכני שמחייב ציוד מלא, ולכן הן לא מותאמות לאימונים ביתיים." };
+
+  return { reply: "זו שאלה טובה, ואין לי עליה תשובה מדויקת במאגר. אפשר לפנות לצוות המנטורים בוואטסאפ: 054-3035040." };
 }
 
 /* ---------- טופס ליד ---------- */

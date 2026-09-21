@@ -906,6 +906,8 @@ section {
   font-weight: 600;
 }
 
+.msg-link { color: var(--accent); font-weight: 600; display: inline-block; margin-top: .4rem; }
+
 .chat-form {
   display: flex;
   gap: 0.5rem;
