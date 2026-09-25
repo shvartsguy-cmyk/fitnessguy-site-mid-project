@@ -809,6 +809,14 @@ section {
   z-index: var(--z-chat-btn);
   border-radius: 999px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  padding-inline-start: 0.45rem;
+}
+
+.chat-open-face {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: var(--base-deep);
 }
 
 .chat {
@@ -834,10 +842,9 @@ section {
   background: var(--surface);
 }
 
-/* סלוט לדמות התלת-ממד בהמשך */
 .avatar {
-  width: 38px;
-  height: 38px;
+  width: 44px;
+  height: 44px;
   flex: none;
   background: var(--base-deep);
   border: 1px solid var(--iron-lo);
@@ -849,7 +856,7 @@ section {
 .avatar img {
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
 }
 
 .chat-title {
@@ -898,6 +905,26 @@ section {
 .msg-bot {
   background: var(--surface);
   justify-self: start;
+}
+
+.msg-row {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  justify-self: start;
+  max-width: 85%;
+}
+
+.msg-row .msg {
+  max-width: none;
+}
+
+.msg-face {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  border: 1px solid var(--iron-lo);
+  background: var(--base-deep);
 }
 
 .msg-me {

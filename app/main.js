@@ -55,11 +55,26 @@ const chatOpenBtn = document.getElementById("chat-open");
 let lastFocus = null;
 
 if (chat && chatForm) {
+  const avatarSrc = chat.querySelector(".avatar img")?.getAttribute("src");
+
   function addMessage(text, who) {
     const el = document.createElement("div");
     el.className = "msg " + (who === "me" ? "msg-me" : "msg-bot");
     el.textContent = text;
-    chatLog.appendChild(el);
+    if (who !== "me" && avatarSrc) {
+      const row = document.createElement("div");
+      row.className = "msg-row";
+      const face = document.createElement("img");
+      face.className = "msg-face";
+      face.src = avatarSrc;
+      face.alt = "";
+      face.width = 28;
+      face.height = 28;
+      row.append(face, el);
+      chatLog.appendChild(row);
+    } else {
+      chatLog.appendChild(el);
+    }
     chatLog.scrollTop = chatLog.scrollHeight;
     return el;
   }
