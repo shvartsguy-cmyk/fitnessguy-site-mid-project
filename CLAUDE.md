@@ -17,6 +17,7 @@
 - **מאגר וקטורי:** Pinecone, index `fitnessguy`, namespace `guy`. יעד: ≥100 וקטורים.
 - **בסיס נתונים:** Supabase — טבלאות `members`, `weight_tracking`, `chat_logs`.
 - **עמוד האתר:** ⚠️ טרם נבנה. יתחבר לסוכן דרך webhook n8n (כתובת תתעדכן כאן כשתיווצר).
+- **ייצור מדיה:** fal.ai דרך MCP (`.mcp.json` + `.claude/settings.json`, מפתח ב-`.env`). פרטים ב-`media/CLAUDE.md`, התוצרים נשמרים ב-`media/generated/`.
 - **Webhooks:** ⚠️ טרם קיימים — לעדכן כאן כתובת מלאה + הגדרת CORS לכל webhook עם יצירתו.
 
 ## אזהרות

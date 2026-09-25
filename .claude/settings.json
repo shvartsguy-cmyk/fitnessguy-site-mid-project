@@ -1,0 +1,25 @@
+{
+  "enableAllProjectMcpServers": false,
+  "enabledMcpjsonServers": ["fal-ai"],
+  "permissions": {
+    "allow": [
+      "mcp__fal-ai__search_models",
+      "mcp__fal-ai__get_model_schema",
+      "mcp__fal-ai__get_pricing",
+      "mcp__fal-ai__search_docs",
+      "mcp__fal-ai__recommend_model",
+      "mcp__fal-ai__check_job",
+      "mcp__fal-ai__get_job_result",
+      "mcp__fal-ai__cancel_job",
+      "mcp__fal-ai__upload_file"
+    ],
+    "ask": [
+      "mcp__fal-ai__run_model",
+      "mcp__fal-ai__submit_job"
+    ],
+    "deny": [
+      "Read(./.env)",
+      "Edit(./.env)"
+    ]
+  }
+}

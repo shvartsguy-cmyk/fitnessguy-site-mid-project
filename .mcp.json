@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "fal-ai": {
+      "type": "http",
+      "url": "https://mcp.fal.ai/mcp",
+      "headersHelper": "node .claude/fal-auth-headers.js"
+    }
+  }
+}
