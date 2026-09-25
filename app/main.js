@@ -127,6 +127,22 @@ if (chat && chatForm) {
   });
 }
 
+if (chatDock) {
+  let queued = false;
+  const updateDock = () => {
+    const compact = scrollY > 40;
+    if (compact) chatDock.classList.add("was-compact");
+    chatDock.classList.toggle("is-compact", compact);
+    queued = false;
+  };
+  addEventListener("scroll", () => {
+    if (queued) return;
+    queued = true;
+    requestAnimationFrame(updateDock);
+  }, { passive: true });
+  updateDock();
+}
+
 function renderReply(bubble, payload) {
   bubble.textContent = payload.reply;
   const link = payload.link;
