@@ -424,7 +424,7 @@ section {
 .stats { padding-block: clamp(2rem, 4vw, 3rem); border-bottom: var(--rule); background: var(--base-deep); }
 .stats-in { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; text-align: center; }
 .stats-in div { display: grid; gap: .3rem; justify-items: center; }
-.stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); color: var(--accent); }
+.stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(3.2rem, 2.4rem + 3.2vw, 4.8rem); line-height: 1.05; color: var(--accent); }
 .stats-in span { color: var(--bone-dim); font-size: .95rem; }
 @media (max-width: 640px) { .stats-in { grid-template-columns: 1fr; } }
 
