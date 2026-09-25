@@ -39,7 +39,7 @@ Full-body 3D stylized character of a muscular male fitness coach, standing confi
 Edit the first image (the 3D animated fitness coach character). Change only his t-shirt: make it a clean light-grey/off-white fitted athletic t-shirt instead of charcoal, and print the logo from the second image on the center of the chest, at a natural chest-logo size, in the logo's original colors (black, dark grey and turquoise), following the fabric's folds and lighting. Use only the logo mark itself, not the white background around it. Keep everything else exactly the same: his face, hair, expression, body, crossed-arms pose, black shorts, white sneakers, the 3D animated-film style, the light-grey studio background, lighting and framing.
 ```
 
-### גרסה סופית: לוגו גדול וממורכז
+### לוגו גדול וממורכז
 
 `2026-09-25_character-heroic-athletic-logo-large_gpt-image-2-5-flare-edit.png`
 
@@ -50,4 +50,17 @@ Edit the first image (the 3D animated fitness coach character). Change only his 
 
 ```
 Edit the first image. Change only the logo on the t-shirt: make it significantly larger and place it exactly centered horizontally on the shirt, centered in the visible chest area between the collar and the crossed arms, filling most of the chest width. Reproduce the logo mark from the second image accurately, in its original colors (black, dark grey and turquoise), without its white background, printed on the fabric and following its folds and lighting. Keep everything else exactly the same: the light-grey t-shirt, his face, hair, expression, body, crossed-arms pose, black shorts, white sneakers, the 3D animated-film style, the light-grey studio background, lighting and framing.
+```
+
+### גרסה סופית: לוגו מתחת לידיים
+
+`2026-09-25_character-heroic-athletic-logo-lower_gpt-image-2-5-flare-edit.png`
+
+- **מודל ופרמטרים:** כמו בעריכות הקודמות.
+- **קלט (`image_urls`):** (1) הגרסה עם הלוגו הגדול, (2) `media/logo-fitnessguy.png`
+- **request_id:** `01a0d841-3d8a-73e3-a4de-48eec5d08eb3`
+- **עלות משוערת:** ~$0.04
+
+```
+Edit the first image. Change only the logo on the t-shirt: move it down so it sits on the lower part of the shirt, fully visible below the crossed arms, centered horizontally in the visible stomach area between the crossed arms and the waistband of the shorts, not covered by the arms at all. Make it just slightly smaller than it is now (about 10-15% smaller), so it fits comfortably in that area. Remove the logo from the chest so there is only one logo. Reproduce the logo mark from the second image accurately, in its original colors (black, dark grey and turquoise), without its white background, printed on the fabric and following its folds and lighting. Keep everything else exactly the same: the light-grey t-shirt, his face, hair, expression, body, crossed-arms pose, black shorts, white sneakers, the 3D animated-film style, the light-grey studio background, lighting and framing.
 ```
