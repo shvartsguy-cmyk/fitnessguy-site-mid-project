@@ -52,7 +52,7 @@ Edit the first image (the 3D animated fitness coach character). Change only his 
 Edit the first image. Change only the logo on the t-shirt: make it significantly larger and place it exactly centered horizontally on the shirt, centered in the visible chest area between the collar and the crossed arms, filling most of the chest width. Reproduce the logo mark from the second image accurately, in its original colors (black, dark grey and turquoise), without its white background, printed on the fabric and following its folds and lighting. Keep everything else exactly the same: the light-grey t-shirt, his face, hair, expression, body, crossed-arms pose, black shorts, white sneakers, the 3D animated-film style, the light-grey studio background, lighting and framing.
 ```
 
-### גרסה סופית: לוגו מתחת לידיים
+### לוגו מתחת לידיים
 
 `2026-09-25_character-heroic-athletic-logo-lower_gpt-image-2-5-flare-edit.png`
 
@@ -63,4 +63,17 @@ Edit the first image. Change only the logo on the t-shirt: make it significantly
 
 ```
 Edit the first image. Change only the logo on the t-shirt: move it down so it sits on the lower part of the shirt, fully visible below the crossed arms, centered horizontally in the visible stomach area between the crossed arms and the waistband of the shorts, not covered by the arms at all. Make it just slightly smaller than it is now (about 10-15% smaller), so it fits comfortably in that area. Remove the logo from the chest so there is only one logo. Reproduce the logo mark from the second image accurately, in its original colors (black, dark grey and turquoise), without its white background, printed on the fabric and following its folds and lighting. Keep everything else exactly the same: the light-grey t-shirt, his face, hair, expression, body, crossed-arms pose, black shorts, white sneakers, the 3D animated-film style, the light-grey studio background, lighting and framing.
+```
+
+### גרסה סופית: לוגו מאחורי הידיים
+
+`2026-09-25_character-heroic-athletic-logo-behind-arms_gpt-image-2-5-flare-edit.png`
+
+- **מודל ופרמטרים:** כמו בעריכות הקודמות.
+- **קלט (`image_urls`):** (1) הגרסה עם הלוגו הגדול (`...-logo-large_...`), (2) `media/logo-fitnessguy.png`
+- **request_id:** `01a0d847-d8af-7de2-bd53-f670970b1edb`
+- **עלות משוערת:** ~$0.04
+
+```
+Edit the first image. Change only the position of the logo on the t-shirt: move it down so it is centered horizontally and vertically centered at the height of the crossed arms, printed on the shirt behind the forearms. The crossed arms must be in front of the logo and naturally cover part of it (roughly the middle band of the logo), with the top and bottom portions of the logo still visible above and below the arms, like a real print on the shirt partly hidden by the arms. Keep the logo the same size as it is now. Remove it from its current higher position so there is only one logo. Reproduce the logo mark from the second image accurately, in its original colors (black, dark grey and turquoise), without its white background, following the fabric's folds and lighting. Keep everything else exactly the same: the light-grey t-shirt, his face, hair, expression, body, the arms and crossed-arms pose, black shorts, white sneakers, the 3D animated-film style, the light-grey studio background, lighting and framing.
 ```
