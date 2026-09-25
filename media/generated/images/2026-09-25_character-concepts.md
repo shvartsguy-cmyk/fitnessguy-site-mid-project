@@ -90,3 +90,13 @@ Edit the first image. Change only the position of the logo on the t-shirt: move 
 ```
 Edit the first image. Change the pose of the arms only: instead of crossed arms, his arms now hang relaxed and naturally at his sides, slightly away from the body, hands loose and relaxed, a calm confident standing pose. With the arms uncrossed, the logo on the t-shirt must be fully visible: keep it large and exactly centered on the chest, the same size and position as now, completing any part that was hidden by the arms. Reproduce the logo mark from the second image accurately, in its original colors (black, dark grey and turquoise), without its white background, following the fabric's folds and lighting. Keep everything else exactly the same: the light-grey t-shirt, his face, hair, friendly expression, muscular body and proportions, black shorts, white sneakers, leg stance, the 3D animated-film style, the light-grey studio background, lighting and full-body framing.
 ```
+
+### גרסה באיכות גבוהה (upscale)
+
+`2026-09-25_character-heroic-athletic-final-hq_topaz-cgi-3x.png` — **3072×4608**
+
+- **מקור:** `2026-09-25_character-heroic-athletic-arms-relaxed_gpt-image-2-5-flare-edit.png` (1024×1536)
+- **מודל:** `topaz/upscale/image/precision`, הגדלה נאמנה בלי שינוי תוכן
+- **פרמטרים:** `model: CGI`, `upscale_factor: 3`, `face_enhancement: false` (כדי שהפנים יישארו בסגנון 3D ולא יהפכו לריאליסטיות), `output_format: png`
+- **request_id:** `01a0d84d-d3b9-7b82-a9e7-53beea7c3269`
+- **עלות:** $0.08 (עד 24MP)
