@@ -35,14 +35,19 @@ function sessionId() {
 /* ---------- מסך טעינה ---------- */
 
 const loader = document.getElementById("loader");
+// הגרף מצויר רק כשמסך הטעינה נסגר, אחרת חלק מהאנימציה רץ מאחוריו
+const startChart = () => document.querySelector(".chart")?.classList.add("anim");
 
 if (loader) {
   window.addEventListener("load", () => {
     setTimeout(() => {
       loader.classList.add("done");
+      startChart();
       setTimeout(() => loader.remove(), prefersReduced ? 0 : 600);
     }, prefersReduced ? 0 : 700);
   });
+} else {
+  startChart();
 }
 
 /* ---------- צ'אט ---------- */
@@ -319,7 +324,7 @@ if (navToggle && navPanel) {
   });
 }
 
-/* ---------- זרקור עכבר וגרף מקושר לגלילה ---------- */
+/* ---------- זרקור עכבר (ב-hero הוא גם "פנס" שחושף את תמונת הרקע) ---------- */
 
 if (!prefersReduced && canHover) {
   document.querySelectorAll(".spot").forEach((spot) => {
@@ -340,31 +345,6 @@ if (!prefersReduced && canHover) {
     });
     host.addEventListener("pointerleave", () => spot.classList.remove("is-live"));
   });
-}
-
-const chartBreak = document.querySelector(".track-break");
-const heroEl = document.querySelector(".hero");
-
-if (chartBreak && heroEl) {
-  // Must stay in sync with `stroke-dasharray: 260` on .chart .track-break in styles.css.
-  const LEN = 260;
-  if (prefersReduced) {
-    chartBreak.style.strokeDashoffset = "0";
-  } else {
-    let queued = false;
-    const paint = () => {
-      const r = heroEl.getBoundingClientRect();
-      const travelled = Math.min(Math.max(-r.top / (r.height * 0.6), 0), 1);
-      chartBreak.style.strokeDashoffset = String(LEN * (1 - travelled));
-      queued = false;
-    };
-    addEventListener("scroll", () => {
-      if (queued) return;
-      queued = true;
-      requestAnimationFrame(paint);
-    }, { passive: true });
-    paint();
-  }
 }
 
 /* ---------- ספירה עולה למספרים בסקציית השיטה ---------- */

@@ -277,6 +277,24 @@ section {
   opacity: 1;
 }
 
+/* פנס: ב-hero הזרקור חושף עוד קצת מתמונת הרקע סביב העכבר. השכבה הכהה מעל
+ * התמונה מגבילה את החשיפה כך שהטקסט נשאר בניגודיות AA גם במרכז הפנס. */
+.hero-grid {
+  position: relative;
+}
+
+@media (hover: hover) and (min-width: 901px) {
+  .hero .spot {
+    --reveal: 0.88;
+    background:
+      radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(19, 227, 230, .07), transparent 65%),
+      linear-gradient(rgba(18, 22, 26, var(--reveal)), rgba(18, 22, 26, var(--reveal))),
+      url("https://res.cloudinary.com/dmrksuz8a/image/upload/e_saturation:-80/w_1920/f_auto,q_auto:low/v1790341244/hero-gym-desktop.png") center / cover no-repeat;
+    -webkit-mask-image: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), #000 30%, transparent 100%);
+    mask-image: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), #000 30%, transparent 100%);
+  }
+}
+
 .hero-grid {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr);
@@ -328,9 +346,10 @@ section {
   opacity: 0.85;
 }
 
+/* בהיר מ---iron כדי לעמוד ב-3:1 (WCAG 1.4.11) גם מעל תמונת הרקע */
 .chart .track-stuck {
   fill: none;
-  stroke: var(--iron);
+  stroke: #7a838b;
   stroke-width: 3.5;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -342,7 +361,6 @@ section {
   stroke-width: 4;
   stroke-linecap: round;
   stroke-linejoin: round;
-  /* Must stay in sync with the `LEN` constant in main.js. */
   stroke-dasharray: 260;
 }
 
@@ -361,11 +379,16 @@ section {
   fill: var(--accent);
 }
 
-/* ציור חד-פעמי בטעינה: עולה, נתקע, פורץ */
+/* ציור חד-פעמי כשמסך הטעינה נסגר (main.js מוסיף את .anim): עולה, נתקע, פורץ */
 .anim .track-stuck {
   stroke-dasharray: 460;
   stroke-dashoffset: 460;
   animation: draw 1.5s cubic-bezier(0.4, 0, 0.3, 1) 0.45s forwards;
+}
+
+.anim .track-break {
+  stroke-dashoffset: 260;
+  animation: draw 0.7s cubic-bezier(0.3, 0, 0.2, 1) 2.45s forwards;
 }
 
 .anim .pip,
