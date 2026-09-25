@@ -4,13 +4,16 @@
   let exercises = [];
   let filter = "all";
   let currentId = null;
+  // Demo loops play on their own; with reduced motion they wait for the play button.
+  // Controls stay on either way so the loop can always be paused (WCAG 2.2.2).
+  const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   function render(ex) {
     currentId = ex.id;
     const parts = [];
-    parts.push(`<div class="tech-video">${ex.video
-      ? `<video controls preload="metadata" poster="${ex.video.poster || ""}"><source src="${ex.video.src}" type="video/mp4"></video>`
-      : `<p>סרטון ההדגמה לתרגיל הזה בהכנה.</p>`}</div>`);
+    parts.push(ex.video
+      ? `<div class="tech-video has-video"><video controls muted loop playsinline ${reducedMotion ? 'preload="none"' : "autoplay"} poster="${ex.video.poster || ""}" aria-label="סרטון הדגמה ללא קול: ${ex.name}"><source src="${ex.video.src}" type="video/mp4"></video></div>`
+      : `<div class="tech-video"><p>סרטון ההדגמה לתרגיל הזה בהכנה.</p></div>`);
     parts.push(`<h2>${ex.name}</h2>`);
     if (ex.summary) parts.push(`<p class="lede">${ex.summary}</p>`);
     if (ex.cues.length) parts.push(`<h3>ביצוע נכון</h3><ul>${ex.cues.map((c) => `<li>${c}</li>`).join("")}</ul>`);

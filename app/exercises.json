@@ -4,7 +4,10 @@
     "name": "סקוואט אחורי",
     "nameEn": "Back Squat",
     "pattern": "squat",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790351697/squat-single-v1.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790351697/squat-single-v1.jpg"
+    },
     "summary": "תרגיל הדחיפה המרכזי לפלג גוף תחתון, מבוצע לעומק מלא.",
     "cues": [
       "עומק מלא, עם רגליים ברוחב כתפיים בערך",
@@ -25,7 +28,10 @@
     "name": "דדליפט קונבנציונלי",
     "nameEn": "Conventional Deadlift",
     "pattern": "hinge",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790364855/deadlift-v3.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790364855/deadlift-v3.jpg"
+    },
     "summary": "תנועת הרמה בסיסית מהרצפה, המבוססת על נשימה ולחיצה ליצירת יציבות לעמוד השדרה במהלך ההרמה.",
     "cues": [
       "נשימה ולחיצה (Breathe and Brace) ליצירת לחץ תוך-בטני לפני ההרמה",
@@ -47,14 +53,21 @@
     "name": "לחיצת חזה",
     "nameEn": "Bench Press",
     "pattern": "push",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790365763/bench-press-v2.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790365763/bench-press-v2.jpg"
+    },
     "summary": "תרגיל דחיפה עליון מרכזי, שבו הצמדת השכמות לאורך כל התרגיל קריטית לבטיחות מפרק הכתף.",
     "cues": [
+      "שכיבה על הספסל כשכל הראש מונח על הספסל והעיניים מתחת למוט שבמתקן",
+      "המרפקים יורדים למטה, בזווית של כ-45–70 מעלות מהגו, ולא נפתחים הצידה; האמות נשארות אנכיות מתחת למוט",
+      "המוט יורד באופן מבוקר לחלק התחתון של בית החזה",
       "הצמדה ומשיכה אחורה של השכמות (Scapular Retraction) לאורך כל התרגיל, לא רק בעמדת ההתחלה",
       "אחיזה שאינה רחבה מדי - פחות מ-1.5 רוחבי-אקרומיון"
     ],
     "mistakes": [
       "אחיזה רחבה מדי המגדילה עומס על הכתף",
+      "פתיחת המרפקים הצידה בירידה במקום הורדתם למטה",
       "'פתיחת' השכמות במקום הצמדתן",
       "הרמת ישבן מהספסל",
       "ירידת המוט לנקודה לא עקבית על בית החזה"
@@ -66,7 +79,10 @@
     "name": "לחיצת כתפיים בעמידה",
     "nameEn": "Overhead Press",
     "pattern": "push",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790364294/overhead-press-v2.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790364294/overhead-press-v2.jpg"
+    },
     "summary": "תרגיל דחיפה אנכי מעל הראש, שבו יציבות השכמה ואגן ניטרלי מונעים פיצוי בעמוד השדרה המותני.",
     "cues": [
       "סיבוב-מעלה של השכמה (Scapular Upward Rotation) ונטייה אחורית שלה לאורך התרגיל",
@@ -84,7 +100,10 @@
     "name": "חתירה עם מוט",
     "nameEn": "Barbell Row",
     "pattern": "pull",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790357407/barbell-row-v1.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790357407/barbell-row-v1.jpg"
+    },
     "summary": "תרגיל משיכה אופקי לגב, המבוסס על הובלה מהמרפקים והצמדת שכמות בשיא התנועה.",
     "cues": [
       "הובלת התנועה מהמרפקים אחורה, לא מהידיים/אצבעות",
@@ -100,7 +119,10 @@
     "name": "מתח ומשיכת פולי עליון",
     "nameEn": "Pull-up / Lat Pulldown",
     "pattern": "pull",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790357424/lat-pulldown-v1.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790357424/lat-pulldown-v1.jpg"
+    },
     "summary": "תרגיל משיכה אנכי לגב, המבוסס על ייצוב השכמות לפני התנועה והובלה מהמרפקים.",
     "cues": [
       "הובלה מהמרפקים למטה ואחורה, לא משיכה עם הידיים",
@@ -120,7 +142,10 @@
     "name": "דדליפט רומני",
     "nameEn": "Romanian Deadlift",
     "pattern": "hinge",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790364310/rdl-v2.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790364310/rdl-v2.jpg"
+    },
     "summary": "תנועת כפיפת מותניים המתחילה מעמידה, המפעילה ישבן והמסטרינג תוך שמירה על אגן נטוי מעט קדימה.",
     "cues": [
       "תנועת כפיפת מותניים (Hip Hinge) המתחילה מעמידה, בניגוד לדדליפט הרגיל שמתחיל מהרצפה",
@@ -137,7 +162,10 @@
     "name": "היפ תראסט",
     "nameEn": "Hip Thrust",
     "pattern": "hinge",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790364501/hip-thrust-v1.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790364501/hip-thrust-v1.jpg"
+    },
     "summary": "תרגיל הישבן המוביל מבחינת הפעלת שריר הישבן, המבוצע בגובה ספסל מכויל ובשליטה על נטיית האגן.",
     "cues": [
       "גובה ספסל של כ-40 ס\"מ (טווח 33–48 ס\"מ), עם קצה הספסל מתחת לקצה התחתון של עצמות השכמה",
@@ -158,7 +186,10 @@
     "name": "לחיצת רגליים",
     "nameEn": "Leg Press",
     "pattern": "squat",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790364518/leg-press-v1.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790364518/leg-press-v1.jpg"
+    },
     "summary": "תנועת דחיפה לפלג גוף תחתון במסלול מודרך, הדומה ביומכנית לסקוואט אך ללא עומס על עמוד השדרה.",
     "cues": [
       "עומק תנועה מלא ומבוקר, ללא הגבלה מלאכותית, כל עוד אין כאב - כמו בסקוואט"
@@ -174,7 +205,10 @@
     "name": "לאנג' הליכה / ספליט סקוואט",
     "nameEn": "Walking Lunge / Split Squat",
     "pattern": "squat",
-    "video": null,
+    "video": {
+      "src": "https://res.cloudinary.com/dmrksuz8a/video/upload/ac_none,q_auto/v1790364537/lunge-v1.mp4",
+      "poster": "https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790364537/lunge-v1.jpg"
+    },
     "summary": "תרגילי רגל בודדת (חד-רגליים) המיישמים את עקרונות הסקוואט עם דגש נוסף על יציבות ושליטה.",
     "cues": [
       "תרגילי סקוואט חד-רגליים, עם אותם עקרונות מסלול ברך ועומק כמו בסקוואט",
