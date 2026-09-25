@@ -100,3 +100,15 @@ Edit the first image. Change the pose of the arms only: instead of crossed arms,
 - **פרמטרים:** `model: CGI`, `upscale_factor: 3`, `face_enhancement: false` (כדי שהפנים יישארו בסגנון 3D ולא יהפכו לריאליסטיות), `output_format: png`
 - **request_id:** `01a0d84d-d3b9-7b82-a9e7-53beea7c3269`
 - **עלות:** $0.08 (עד 24MP)
+
+## Character Sheets
+
+כל הגיליונות נבנו מ-`2026-09-25_character-heroic-athletic-arms-relaxed_gpt-image-2-5-flare-edit.png` (תמונת ייחוס) + `media/logo-fitnessguy.png`, עם `openai/gpt-image-2.5/flare/edit`, `image_size: {width: 2560, height: 1440}`, `quality: high`, `output_format: png`. עלות משוערת ~$0.055 לגיליון.
+
+### גיליון 1: Turnaround
+
+`2026-09-25_character-sheet-1-turnaround_gpt-image-2-5-flare-edit.png`. 5 זוויות (חזית, 3/4 חזית, צד, 3/4 גב, גב) + דוגמיות צבע. request_id: `01a0d853-c824-77d1-81c6-aca29147f2f2`
+
+```
+Create a professional character turnaround model sheet of the exact character in the first image, for use as a consistency reference by animators. Show the same character five times, full body head to toe, side by side in a single row, all at exactly the same scale, standing on the same baseline, evenly spaced, in the same relaxed neutral standing pose with arms hanging naturally at his sides: 1) front view, 2) three-quarter front view (turned 45 degrees), 3) side profile view (turned 90 degrees), 4) three-quarter back view, 5) back view. The character must be identical in every view: same face, hair, skin tone, muscular proportions, light-grey t-shirt, black training shorts and white sneakers. The logo from the second image appears only on the front of the t-shirt, large and centered on the chest, in its original colors (black, dark grey and turquoise), correctly foreshortened in the three-quarter and side views; the back of the t-shirt is plain with no logo. Same 3D animated-film style as the first image. Flat, even, neutral studio lighting with soft shadows, identical in every view. Clean plain very light grey background. Under each figure a small clean uppercase label: FRONT, 3/4 FRONT, SIDE, 3/4 BACK, BACK. A small clean title at the top left: FITNESS GUY - CHARACTER TURNAROUND. Along the bottom, a neat row of six flat color swatch squares with small uppercase labels: SKIN, HAIR, SHIRT, SHORTS, SNEAKERS, LOGO TURQUOISE, sampled from the character. Minimal, professional model-sheet layout, sans-serif typography.
+```
