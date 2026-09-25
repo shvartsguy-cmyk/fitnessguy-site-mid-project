@@ -324,7 +324,7 @@ if (navToggle && navPanel) {
   });
 }
 
-/* ---------- זרקור עכבר (ב-hero הוא גם "פנס" שחושף את תמונת הרקע) ---------- */
+/* ---------- זרקור עכבר ---------- */
 
 if (!prefersReduced && canHover) {
   document.querySelectorAll(".spot").forEach((spot) => {

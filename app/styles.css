@@ -227,14 +227,15 @@ section {
   overflow: hidden;
 }
 
-/* תמונת רקע דהויה. האפור מגיע מ-Cloudinary (e_saturation), השקיפות ומעברי
- * הצבע כאן — כוונו מול ניגודיות AA של הטקסט האפור הקטן (lede, hero-note). */
+/* תמונת רקע דהויה. Cloudinary מוריד רוויה וניגודיות (e_saturation, e_contrast)
+ * כדי לרכך את האורות הבהירים; השקיפות, מעברי הצבע וההצללה הרכה מאחורי עמודת
+ * הטקסט (.hero-copy::before) כוונו מול ניגודיות AA של הטקסט האפור הקטן. */
 .hero {
   isolation: isolate;
 }
 
 .hero-bg {
-  --hero-bg-opacity: 0.3;
+  --hero-bg-opacity: 0.45;
   position: absolute;
   inset: 0;
   z-index: -1;
@@ -254,13 +255,30 @@ section {
   inset: 0;
   background:
     linear-gradient(to bottom, transparent 55%, var(--base)),
-    linear-gradient(to left, rgba(18, 22, 26, 0.88), rgba(18, 22, 26, 0.66) 50%, rgba(18, 22, 26, 0.82));
+    linear-gradient(to left, rgba(18, 22, 26, 0.8), rgba(18, 22, 26, 0.5) 50%, rgba(18, 22, 26, 0.7));
+}
+
+.hero-copy {
+  position: relative;
+}
+
+.hero-copy::before {
+  content: "";
+  position: absolute;
+  inset: -8% -12%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(closest-side, rgba(18, 22, 26, 0.6), transparent);
 }
 
 @media (max-width: 900px) {
   .hero-bg::after {
     background:
-      linear-gradient(to bottom, rgba(18, 22, 26, 0.82), rgba(18, 22, 26, 0.72) 45%, var(--base));
+      linear-gradient(to bottom, rgba(18, 22, 26, 0.72), rgba(18, 22, 26, 0.58) 45%, var(--base));
+  }
+
+  .hero-copy::before {
+    background: radial-gradient(closest-side, rgba(18, 22, 26, 0.72), transparent);
   }
 }
 
@@ -275,24 +293,6 @@ section {
 
 .spot.is-live {
   opacity: 1;
-}
-
-/* פנס: ב-hero הזרקור חושף עוד קצת מתמונת הרקע סביב העכבר. השכבה הכהה מעל
- * התמונה מגבילה את החשיפה כך שהטקסט נשאר בניגודיות AA גם במרכז הפנס. */
-.hero-grid {
-  position: relative;
-}
-
-@media (hover: hover) and (min-width: 901px) {
-  .hero .spot {
-    --reveal: 0.88;
-    background:
-      radial-gradient(400px circle at var(--mx, 50%) var(--my, 50%), rgba(19, 227, 230, .07), transparent 65%),
-      linear-gradient(rgba(18, 22, 26, var(--reveal)), rgba(18, 22, 26, var(--reveal))),
-      url("https://res.cloudinary.com/dmrksuz8a/image/upload/e_saturation:-80/w_1920/f_auto,q_auto:low/v1790341244/hero-gym-desktop.png") center / cover no-repeat;
-    -webkit-mask-image: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), #000 30%, transparent 100%);
-    mask-image: radial-gradient(280px circle at var(--mx, 50%) var(--my, 50%), #000 30%, transparent 100%);
-  }
 }
 
 .hero-grid {
@@ -422,9 +422,9 @@ section {
 /* ---------- רצועת נתונים ---------- */
 
 .stats { padding-block: clamp(2rem, 4vw, 3rem); border-bottom: var(--rule); background: var(--base-deep); }
-.stats-in { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; }
-.stats-in div { display: grid; gap: .3rem; }
-.stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); color: var(--bone); }
+.stats-in { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; text-align: center; }
+.stats-in div { display: grid; gap: .3rem; justify-items: center; }
+.stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(1.6rem, 1.2rem + 1.6vw, 2.4rem); color: var(--accent); }
 .stats-in span { color: var(--bone-dim); font-size: .95rem; }
 @media (max-width: 640px) { .stats-in { grid-template-columns: 1fr; } }
 
@@ -452,7 +452,7 @@ section {
   font-family: var(--display);
   font-size: clamp(1.5rem, 1.2rem + 1.4vw, 2.1rem);
   font-weight: 900;
-  color: var(--bone);
+  color: var(--accent);
   line-height: 1.1;
 }
 
