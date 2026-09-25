@@ -5,8 +5,11 @@
 ## מבנה
 
 - `logo-fitnessguy.png` — הלוגו של העסק
-- `generated/images/` — תמונות שנוצרו ב-fal.ai
-- `generated/videos/` — סרטונים שנוצרו ב-fal.ai
+- `generated/images/`: תמונות שנוצרו ב-fal.ai (דמות, גיליונות דמות, רקעים, תפאורת חדר הכושר של הסרטונים)
+- `generated/videos/<exercise-id>/`: תיקייה לכל תרגיל, בשם ה-`id` שלו מ-`app/exercises.json` (למשל `back-squat`):
+  - הסרטון הסופי ותיעוד התרגיל (`YYYY-MM-DD_<exercise-id>.md`: פרומפטים, request_id, עלות ובדיקה מול מאגר הידע)
+  - `keyframes/`: תמונות המפתח שנכנסו לסרטון הסופי
+  - `attempts/` ו-`keyframes/attempts/`: ניסיונות שנפסלו. לא מוחקים, כי הם מתעדים מה נלמד
 
 ## החיבור ל-fal.ai
 
