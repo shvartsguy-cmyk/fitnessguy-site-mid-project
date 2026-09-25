@@ -306,6 +306,12 @@ section {
   max-width: 14ch;
 }
 
+@media (min-width: 901px) {
+  .hero .lede {
+    font-size: clamp(1.3rem, 0.95rem + 0.6vw, 1.45rem);
+  }
+}
+
 .hero-actions {
   display: flex;
   flex-wrap: wrap;
