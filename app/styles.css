@@ -425,7 +425,7 @@ section {
 .stats-in { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; text-align: center; }
 .stats-in div { display: grid; gap: .3rem; justify-items: center; }
 .stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(3.2rem, 2.4rem + 3.2vw, 4.8rem); line-height: 1.05; color: var(--accent); }
-.stats-in span { color: var(--bone-dim); font-size: .95rem; }
+.stats-in span { color: var(--bone-dim); font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.2rem); }
 @media (max-width: 640px) { .stats-in { grid-template-columns: 1fr; } }
 
 /* ---------- השיטה ---------- */
