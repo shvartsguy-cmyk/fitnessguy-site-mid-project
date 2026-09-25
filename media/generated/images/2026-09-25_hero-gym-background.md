@@ -29,3 +29,19 @@ Photorealistic wide-angle photograph of the interior of a modern, serious streng
 ```
 Create a vertical (portrait) version of this exact gym photograph for a mobile phone screen: the same gym interior, the same equipment style (black squat racks, black plates, benches, dumbbells), the same dark concrete floor and walls, the same moody low-key cool blue-grey color grade, the same turquoise/cyan accent light strips and soft haze, and people of the same look and clothing training naturally. Recompose it as a tall vertical frame shot at eye level down the central aisle, with deep perspective receding toward a vanishing point. Composition for a phone: the top third of the frame is calm — dark ceiling, light fixtures and haze, no people; the people training (two or three of them, e.g. one doing a barbell back squat in a rack and one doing a dumbbell row on a bench) sit in the middle and lower-middle of the frame, candid, mid-exercise, not looking at the camera, faces natural but not the focus, slightly soft with moderate depth of field; the bottom is floor. Realistic documentary photography, natural contrast (not faded), realistic anatomy and hands. No text, no signs, no mirrors.
 ```
+
+## שילוב באתר
+
+- **Cloudinary:** `fitnessguy/hero/hero-gym-desktop` (v1790341244), `fitnessguy/hero/hero-gym-mobile` (v1790341249). מוגשות עם `e_saturation:-80/w_<n>/f_auto,q_auto:low`: מחשב 1280/1920/2560 (≈53/85/132KB), נייד 720/1080 (≈66/108KB). החלפה בין הגרסאות ב-900px, כמו שבירת ה-grid של ה-hero.
+- **CSS (`.hero-bg` ב-`app/styles.css`):** `--hero-bg-opacity: 0.3`, ומעליה מעברי צבע לגוון `--base`, כהים יותר מאחורי הטקסט (ימין) והגרף (שמאל) ובתחתית.
+- **ניגודיות שנמדדה** (הפיקסל הבהיר ביותר מאחורי כל רכיב, צילום מסך בלי טקסט):
+
+| רכיב | דרישה | מחשב | נייד |
+|---|---|---|---|
+| h1 | 3:1 | 10.81 | 12.15 |
+| lede (אפור, הכי רגיש) | 4.5:1 | 5.35 | 4.89 |
+| hero-note | 4.5:1 | 6.93 | 5.77 |
+| תוויות הגרף | 4.5:1 | 5.94 | 7.03 |
+| קו הגרף "תקוע" | 3:1 | 1.79 (לפני הרקע: 1.90) | 2.16 |
+
+קו הגרף נכשל גם לפני הרקע. זו בעיה קיימת בצבע הקו (`--iron`), לא ברקע.

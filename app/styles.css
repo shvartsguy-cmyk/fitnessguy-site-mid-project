@@ -227,6 +227,43 @@ section {
   overflow: hidden;
 }
 
+/* תמונת רקע דהויה. האפור מגיע מ-Cloudinary (e_saturation), השקיפות ומעברי
+ * הצבע כאן — כוונו מול ניגודיות AA של הטקסט האפור הקטן (lede, hero-note). */
+.hero {
+  isolation: isolate;
+}
+
+.hero-bg {
+  --hero-bg-opacity: 0.3;
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.hero-bg img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: var(--hero-bg-opacity);
+}
+
+.hero-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(to bottom, transparent 55%, var(--base)),
+    linear-gradient(to left, rgba(18, 22, 26, 0.88), rgba(18, 22, 26, 0.66) 50%, rgba(18, 22, 26, 0.82));
+}
+
+@media (max-width: 900px) {
+  .hero-bg::after {
+    background:
+      linear-gradient(to bottom, rgba(18, 22, 26, 0.82), rgba(18, 22, 26, 0.72) 45%, var(--base));
+  }
+}
+
 .spot {
   position: absolute;
   inset: 0;
