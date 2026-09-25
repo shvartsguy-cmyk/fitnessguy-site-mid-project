@@ -51,7 +51,7 @@ const chat = document.getElementById("chat");
 const chatLog = document.getElementById("chat-log");
 const chatForm = document.getElementById("chat-form");
 const chatInput = document.getElementById("chat-input");
-const chatOpenBtn = document.getElementById("chat-open");
+const chatDock = document.getElementById("chat-dock");
 let lastFocus = null;
 
 if (chat && chatForm) {
@@ -82,7 +82,7 @@ if (chat && chatForm) {
   function openChat() {
     lastFocus = document.activeElement;
     chat.hidden = false;
-    chatOpenBtn.hidden = true;
+    chatDock.hidden = true;
     if (!chatLog.childElementCount) {
       addMessage(
         "שלום! אני FitnessBot. אפשר לשאול אותי על מסלולים ומחירים, מדיניות ביטול והקפאה, תזונה ותוספים, או טכניקה של תרגילים.",
@@ -94,7 +94,7 @@ if (chat && chatForm) {
 
   function closeChat() {
     chat.hidden = true;
-    chatOpenBtn.hidden = false;
+    chatDock.hidden = false;
     if (lastFocus) lastFocus.focus();
   }
 
@@ -411,7 +411,8 @@ if (calcInput && calcOut) {
 /* ---------- כפתורים מגנטיים ---------- */
 
 if (!prefersReduced && canHover) {
-  document.querySelectorAll(".btn-primary, .btn-ghost").forEach((btn) => {
+  // הכפתור הצף לא זז — הדמות נשענת עליו
+  document.querySelectorAll(".btn-primary:not(.chat-open), .btn-ghost").forEach((btn) => {
     btn.addEventListener("pointermove", (e) => {
       const r = btn.getBoundingClientRect();
       const dx = (e.clientX - (r.left + r.width / 2)) / (r.width / 2);
