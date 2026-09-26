@@ -14,7 +14,6 @@
     .card { padding: 28px 20px !important; }
     .h1 { font-size: 26px !important; }
     .track { font-size: 24px !important; }
-    .btn a { display: block !important; }
   }
 </style>
 </head>
@@ -77,8 +76,16 @@
 
       <!-- כפתור -->
       <table role="presentation" dir="rtl" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:32px 0 0;">
-        <tr><td class="btn" align="center">
-          <a href="%TG_URL%" style="display:inline-block;background:#13e3e6;color:#06232b;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-weight:700;font-size:17px;line-height:1;text-decoration:none;padding:18px 36px;text-align:center;">פתיחת הבוט בטלגרם</a>
+        <tr><td align="center">
+          <!-- הכפתור הוא תמונה: מצב כהה של Gmail לא משנה צבעים בתוך תמונות, אז הטקסט נשאר כהה על טורקיז.
+               התא הטורקיז וה-alt שומרים על כפתור קריא ולחיץ גם כשהתמונות חסומות. -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0">
+            <tr><td bgcolor="#13e3e6" style="background:#13e3e6;">
+              <a href="%TG_URL%" style="display:block;text-decoration:none;">
+                <img src="https://res.cloudinary.com/dmrksuz8a/image/upload/v1790424114/email-telegram-button.png" width="340" height="56" alt="פתיחת הבוט בטלגרם" style="display:block;border:0;width:340px;max-width:100%;height:auto;background:#13e3e6;color:#06232b;font-family:Arial,sans-serif;font-weight:700;font-size:17px;line-height:56px;text-align:center;">
+              </a>
+            </td></tr>
+          </table>
         </td></tr>
         <tr><td dir="rtl" align="center" style="padding:14px 0 0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:14px;line-height:1.6;color:#9aa4ac;text-align:center;">
           כשהבוט יבקש, מסרו לו את אותו מספר טלפון שהשארתם באתר, והוא יזהה אתכם.
