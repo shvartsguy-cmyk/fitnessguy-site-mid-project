@@ -1,0 +1,789 @@
+{
+  "name": "Lead Intake – FitnessGuy",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "fitnessguy/lead",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "http://localhost:8765"
+        }
+      },
+      "id": "eb343c91-3155-45cd-9c7d-252b27cd8742",
+      "name": "Webhook – ליד",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        208
+      ],
+      "webhookId": "693fef82-44b8-4eae-966a-8297608c8164"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "tg-url",
+              "name": "telegram_url",
+              "value": "https://t.me/fitnessguy1_bot",
+              "type": "string"
+            },
+            {
+              "id": "team-email",
+              "name": "team_email",
+              "value": "shvarts.guy@gmail.com",
+              "type": "string"
+            }
+          ]
+        },
+        "includeOtherFields": true,
+        "options": {}
+      },
+      "id": "31e011c9-5c36-46df-bc8f-5840ef359309",
+      "name": "הגדרות",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        224,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Validates the site form server-side too: the browser checks can be bypassed.\nconst body = $input.first().json.body || {};\nconst clean = (v, max) => String(v ?? '').trim().slice(0, max);\nconst GOALS = { mass: 'עלייה במסת שריר', cut: 'ירידה במשקל וחיטוב', plateau: 'שבירת תקיעות', unsure: 'עדיין לא בטוח' };\nconst LEVELS = { beginner: 'מתחיל', intermediate: 'מתאמן כבר תקופה', stuck: 'מתאמן ותקוע' };\n\nconst lead = {\n  name: clean(body.name, 80),\n  phone: clean(body.phone, 20).replace(/\\D/g, ''),\n  email: clean(body.email, 120).toLowerCase(),\n  goal: clean(body.goal, 20),\n  level: clean(body.level, 20),\n  marketing: body.marketing === true || body.marketing === 'true' || body.marketing === 'on',\n  session_id: clean(body.session_id, 64),\n};\n\nlet error = '';\nif (!lead.name || !lead.phone || !lead.email || !lead.goal || !lead.level) error = 'צריך למלא שם, טלפון, אימייל, מטרה וניסיון.';\nelse if (!/^0\\d{8,9}$/.test(lead.phone)) error = 'מספר הטלפון לא נראה תקין.';\nelse if (!/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(lead.email)) error = 'כתובת האימייל לא נראית תקינה.';\nelse if (!GOALS[lead.goal]) error = 'המטרה שנבחרה לא מוכרת.';\nelse if (!LEVELS[lead.level]) error = 'רמת הניסיון שנבחרה לא מוכרת.';\nelse if (!(body.privacy === true || body.privacy === 'true' || body.privacy === 'on')) error = 'צריך לאשר את מדיניות הפרטיות.';\n\nreturn [{ json: {\n  ...lead,\n  // goal_label feeds the team email's \"מטרה\" line, so it carries the level too\n  goal_label: GOALS[lead.goal] ? `${GOALS[lead.goal]} · ${LEVELS[lead.level] || ''}` : '',\n  goal_only: GOALS[lead.goal] || '',\n  level_label: LEVELS[lead.level] || '',\n  valid: !error,\n  error,\n} }];\n"
+      },
+      "id": "3c2592db-5ed6-4f96-987b-3a9a5363625b",
+      "name": "אימות ונרמול",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        448,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 1
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.valid }}",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "5547e95c-3852-47dc-8111-dc0f22c38b58",
+      "name": "תקין?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        672,
+        208
+      ]
+    },
+    {
+      "parameters": {
+        "tableId": "lead_jobs",
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "pending"
+            }
+          ]
+        }
+      },
+      "id": "9323bef4-11a3-40eb-80da-00f13c749e92",
+      "name": "יצירת משימה",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        880,
+        112
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8S131kZl9i6E5hNl",
+          "name": "FitnessGuy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ job_id: $json.job_id }) }}",
+        "options": {}
+      },
+      "id": "06ab1f80-1657-4308-801e-1a3aea7e9f91",
+      "name": "Respond – job_id",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        1104,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://obthzyvxjqllltgwrjtp.supabase.co/rest/v1/chat_logs",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "user_key",
+              "value": "=eq.web:{{ $('אימות ונרמול').first().json.session_id || 'none' }}"
+            },
+            {
+              "name": "select",
+              "value": "user_message,bot_response"
+            },
+            {
+              "name": "order",
+              "value": "timestamp.asc"
+            },
+            {
+              "name": "limit",
+              "value": "20"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "a3ccd0cb-8bcd-44f8-9784-a39b901a3cb9",
+      "name": "שיחת האתר",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1328,
+        112
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "8S131kZl9i6E5hNl",
+          "name": "FitnessGuy"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Picks a track by rules taken from knowledge/pricing-expanded.md, where the tracks\n// differ by experience level, and prepares a model prompt for leads who chatted first.\nconst lead = $('אימות ונרמול').first().json;\nconst turns = $input.all().map(i => i.json).filter(t => t.user_message);\nconst transcript = turns.map(t => 'מבקר: ' + t.user_message + '\\nבוט: ' + (t.bot_response || '')).join('\\n\\n');\n\n// Quoted from knowledge/pricing-expanded.md (\"מסלולי השירות ותמחור\").\nconst TRACKS = {\n  'The Foundation': 'מיועד למתאמנים מתחילים. כולל שיחת אפיון של 30 דקות, בניית תוכנית אימון ראשונית מבוססת ביומכניקה, והנחיות תזונה בסיסיות ללא ליווי חודשי שוטף. 450 ש\"ח בתשלום חד-פעמי.',\n  'The Builder': 'מיועד למתאמנים בינוניים העובדים עצמאית. כולל תוכנית אימונים מתקדמת (כגון חלוקת Upper/Lower), תוכנית תזונה, גישה לגיליון מעקב נתונים, ועדכון תוכנית אחת לחודש. תמיכה בהודעות טקסט בלבד. 550 ש\"ח לחודש, ללא התחייבות ארוכת טווח.',\n  'The Plateau Breaker': 'שירות הפרימיום לליווי אישי (1-on-1), המיועד לשבירת תקיעות ולמקסום היפרטרופיה. כולל ניתוח ביומכני שבועי של סרטוני וידאו, פריודיזציה שבועית דינמית, התאמות תזונה בזמן אמת, וזמינות מלאה בשיחות אישיות. 1,200 ש\"ח לחודש, בהתחייבות למינימום 3 חודשים.',\n};\n\n// Beginners start with The Foundation; anyone stuck gets The Plateau Breaker;\n// intermediates who train independently get The Builder.\nconst track = lead.level === 'beginner' ? 'The Foundation'\n  : (lead.level === 'stuck' || lead.goal === 'plateau') ? 'The Plateau Breaker'\n  : 'The Builder';\n\nconst BUILDER_WHY = {\n  mass: 'המסלול הזה מתאים לכם כי אתם כבר מתאמנים ועובדים עצמאית, ובניית מסה נשענת על תוכנית אימונים מתקדמת, תוכנית תזונה ומעקב נתונים, עם עדכון תוכנית כל חודש.',\n  cut: 'המסלול הזה מתאים לכם כי אתם כבר מתאמנים ועובדים עצמאית, וחיטוב נשען על תוכנית תזונה מדויקת ומעקב נתונים, עם עדכון תוכנית כל חודש.',\n  unsure: 'המסלול הזה מתאים לכם כי אתם כבר מתאמנים ועובדים עצמאית: תוכנית אימונים מתקדמת, תוכנית תזונה, גיליון מעקב ועדכון תוכנית כל חודש, בלי התחייבות ארוכה.',\n};\nconst WHY = {\n  'The Foundation': 'המסלול הזה מתאים לכם כי הוא נבנה למתאמנים מתחילים: שיחת אפיון, תוכנית אימון ראשונית מבוססת ביומכניקה והנחיות תזונה בסיסיות, בתשלום חד-פעמי. זו גם הדרך להכיר את שיטת העבודה לפני ליווי מלא.',\n  'The Builder': BUILDER_WHY[lead.goal] || BUILDER_WHY.unsure,\n  'The Plateau Breaker': 'המסלול הזה מתאים לכם כי הוא נבנה בדיוק לשבירת תקיעות: ליווי אישי צמוד, ניתוח ביומכני שבועי של סרטוני הטכניקה, פריודיזציה דינמית והתאמות תזונה בזמן אמת.',\n};\n\nconst prompt = [\n  'אתה יועץ ההתאמה של Fitness Guy. בחר מסלול אחד לליד שמילא את טופס ההתאמה באתר, אחרי שיחה עם הבוט.',\n  'המסלולים (מתוך מאגר הידע):\\n' + Object.entries(TRACKS).map(([n, d]) => `- ${n}: ${d}`).join('\\n'),\n  `מהטופס: מטרה \"${lead.goal_only}\", ניסיון \"${lead.level_label}\". לפי הכללים, ההמלצה היא ${track}.`,\n  'השיחה שלו עם הבוט:\\n' + transcript,\n  [\n    'הוראות:',\n    `- track: ברירת המחדל היא ${track}. שנה רק אם השיחה מראה בבירור שמסלול אחר מתאים יותר (למשל: מספר על תקיעות, על היותו מתחיל, או על צורך בליווי צמוד).`,\n    '- why: משפט או שניים בעברית, בפנייה ללקוח בלשון רבים (\"המסלול הזה מתאים לכם כי...\"), שמתייחסים למה שעלה בשיחה. בלי מחירים ובלי הבטחות לתוצאה.',\n    '- summary: משפט אחד בעברית לצוות, על המטרה ועל מה שהעסיק אותו בשיחה.',\n    '- track חייב להיות בדיוק אחד משלושת השמות, באנגלית ובאותו איות.',\n  ].join('\\n'),\n].join('\\n\\n');\n\nreturn [{ json: {\n  had_chat: turns.length > 0,\n  prompt,\n  track,\n  why: WHY[track],\n  summary: `${lead.goal_label}. לא שוחח עם הבוט לפני הטופס.`,\n} }];\n"
+      },
+      "id": "d1934bcc-0397-4336-bd46-b8494191e05a",
+      "name": "הכנת הבקשה",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1552,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "model": "anthropic/claude-sonnet-5",
+        "options": {
+          "maxTokens": 400,
+          "temperature": 0.3
+        }
+      },
+      "id": "12bbf3f3-9e58-4ac3-b50c-c3aab779a035",
+      "name": "OpenRouter Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1952,
+        224
+      ],
+      "credentials": {
+        "openRouterApi": {
+          "id": "bWvS11QXCVFLCaX4",
+          "name": "shvarts.guy@gmail.com - AI DEV"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{ \"track\": \"The Plateau Breaker\", \"why\": \"משפט או שניים שמסבירים למה המסלול מתאים לו\", \"summary\": \"משפט אחד על מה שהעסיק אותו, לשימוש הצוות\" }"
+      },
+      "id": "6794f386-da84-45fe-9fc6-4e2ae97e1dcf",
+      "name": "מבנה התשובה",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        2080,
+        224
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// One result for all three paths: rules only (no chat), the model (after a chat),\n// or rules as a fallback when the model failed twice.\nconst TRACKS = ['The Foundation', 'The Builder', 'The Plateau Breaker'];\nconst rules = $('הכנת הבקשה').first().json;\nconst input = $input.first().json;\nconst out = input.output && typeof input.output === 'object' ? input.output : null;\n\nlet track = rules.track;\nlet why = rules.why;\nlet summary = rules.summary;\nlet method = 'rules';\n\nif (out) {\n  const modelTrack = TRACKS.find(t => t.toLowerCase() === String(out.track || '').trim().toLowerCase());\n  if (modelTrack && String(out.why || '').trim()) {\n    track = modelTrack;\n    why = String(out.why).trim();\n    summary = String(out.summary || '').trim() || summary;\n    method = 'model';\n  } else {\n    method = 'fallback';\n  }\n} else if (rules.had_chat) {\n  method = 'fallback';\n}\n\nif (method === 'fallback') {\n  summary = `⚠️ ההתאמה נעשתה לפי הכללים כי המודל לא הגיב. כדאי לעבור על שיחת האתר. ${rules.summary}`;\n}\n\nreturn [{ json: {\n  job_id: $('יצירת משימה').first().json.job_id,\n  track,\n  why,\n  summary,\n  method,\n} }];\n"
+      },
+      "id": "795848ca-f2ff-44f9-922a-c50eaf84bf87",
+      "name": "תוצאה",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2256,
+        176
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "tableId": "lead_jobs",
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "job_id",
+              "condition": "eq",
+              "keyValue": "={{ $('תוצאה').first().json.job_id }}"
+            }
+          ]
+        },
+        "fieldsUi": {
+          "fieldValues": [
+            {
+              "fieldId": "status",
+              "fieldValue": "done"
+            },
+            {
+              "fieldId": "track",
+              "fieldValue": "={{ $('תוצאה').first().json.track }}"
+            },
+            {
+              "fieldId": "why",
+              "fieldValue": "={{ $('תוצאה').first().json.why }}"
+            }
+          ]
+        }
+      },
+      "id": "e385cc47-89db-4bf3-a58f-228f13cfc30d",
+      "name": "משימה – הושלמה",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        2256,
+        48
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8S131kZl9i6E5hNl",
+          "name": "FitnessGuy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://obthzyvxjqllltgwrjtp.supabase.co/rest/v1/members",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "supabaseApi",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "on_conflict",
+              "value": "phone"
+            }
+          ]
+        },
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Prefer",
+              "value": "resolution=merge-duplicates,return=minimal"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ full_name: $('אימות ונרמול').first().json.name, phone: $('אימות ונרמול').first().json.phone, email: $('אימות ונרמול').first().json.email, goal: $('אימות ונרמול').first().json.goal, recommended_track: $('תוצאה').first().json.track, summary: $('תוצאה').first().json.summary, marketing_consent: $('אימות ונרמול').first().json.marketing, source: 'web', updated_at: $now.toISO() }) }}",
+        "options": {}
+      },
+      "id": "e4c87877-30d7-45ce-9a99-d67d443728d7",
+      "name": "כרטיס לקוח",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2448,
+        48
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8S131kZl9i6E5hNl",
+          "name": "FitnessGuy"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('הגדרות').first().json.team_email }}",
+        "subject": "={{ $('בניית מיילים').first().json.team_subject }}",
+        "message": "={{ $('בניית מיילים').first().json.team_html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Fitness Guy – אתר"
+        }
+      },
+      "id": "a813597c-6a4c-4676-b2e1-330c0625e2ba",
+      "name": "מייל לצוות",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2880,
+        48
+      ],
+      "webhookId": "97b7cf61-a3aa-476e-9ded-fd42f6549a99",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1yK1gfFR4Rr0Mfus",
+          "name": "shvarts.guy@gmail.com"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('אימות ונרמול').first().json.email }}",
+        "subject": "={{ $('בניית מיילים').first().json.lead_subject }}",
+        "message": "={{ $('בניית מיילים').first().json.lead_html }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Fitness Guy"
+        }
+      },
+      "id": "38acdc2f-ba5a-43cb-a1cd-18051fd50c41",
+      "name": "מייל ללקוח",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        3104,
+        48
+      ],
+      "webhookId": "7931d992-6117-4017-b269-11e79db40616",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "1yK1gfFR4Rr0Mfus",
+          "name": "shvarts.guy@gmail.com"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ error: $json.error }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "c03db20c-462f-40b2-bbb3-0f1ae0b80f77",
+      "name": "Respond – שגיאת קלט",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        880,
+        400
+      ]
+    },
+    {
+      "parameters": {
+        "path": "fitnessguy/lead-status",
+        "responseMode": "responseNode",
+        "options": {
+          "allowedOrigins": "http://localhost:8765"
+        }
+      },
+      "id": "c2a48bbe-45b0-4556-8cf0-0a9ad6c4e8cb",
+      "name": "Webhook – סטטוס",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        0,
+        704
+      ],
+      "webhookId": "6fa25ec3-b5f4-4173-8dbb-99965d075ffa"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "lead_jobs",
+        "limit": 1,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "job_id",
+              "condition": "eq",
+              "keyValue": "={{ /^[0-9a-f-]{36}$/i.test($json.query.job_id || '') ? $json.query.job_id : '00000000-0000-0000-0000-000000000000' }}"
+            }
+          ]
+        }
+      },
+      "id": "05f1ca36-8851-4005-87c5-bbcc38b82bc0",
+      "name": "קריאת משימה",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        224,
+        704
+      ],
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "8S131kZl9i6E5hNl",
+          "name": "FitnessGuy"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify(!$json.job_id ? { done: true, error: true } : $json.status === 'done' ? { done: true, track: $json.track, why: $json.why } : $json.status === 'error' ? { done: true, error: true } : { done: false }) }}",
+        "options": {}
+      },
+      "id": "1925fddd-8f5a-4d8c-9978-9c3db85857fe",
+      "name": "Respond – סטטוס",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        448,
+        704
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Fills the email templates from n8n/emails/ with the lead's data.\n// Every value is HTML-escaped, so text typed into the site form can't inject markup.\nconst LEAD_TEMPLATE = \"<!DOCTYPE html>\\n<html lang=\\\"he\\\" dir=\\\"rtl\\\">\\n<head>\\n<meta charset=\\\"utf-8\\\">\\n<meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1\\\">\\n<meta name=\\\"color-scheme\\\" content=\\\"dark\\\">\\n<meta name=\\\"supported-color-schemes\\\" content=\\\"dark\\\">\\n<title>המסלול שמתאים לכם</title>\\n<link href=\\\"https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@900&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&display=swap\\\" rel=\\\"stylesheet\\\">\\n<style>\\nbody { margin: 0; padding: 0; background: #12161a; }\\na { color: #13e3e6; }\\n@media (max-width: 620px) {\\n.card { padding: 28px 20px !important; }\\n.h1 { font-size: 26px !important; }\\n.track { font-size: 24px !important; }\\n}\\n</style>\\n</head>\\n<body style=\\\"margin:0;padding:0;background:#12161a;\\\">\\n<div style=\\\"display:none;max-height:0;overflow:hidden;opacity:0;color:#12161a;\\\">%PREHEADER%</div>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\" style=\\\"background:#12161a;\\\">\\n<tr><td align=\\\"center\\\" style=\\\"padding:32px 12px;\\\">\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\" style=\\\"max-width:600px;\\\">\\n<tr><td align=\\\"center\\\" style=\\\"padding:0 0 20px;\\\">\\n<img src=\\\"https://res.cloudinary.com/dmrksuz8a/image/upload/e_trim/w_68,h_68,c_fit/w_104,h_104,c_pad,b_rgb:eceef0/r_max,bo_3px_solid_rgb:13e3e6/f_png/v1781354090/Gemini_Generated_Image_5xbjy55xbjy55xbjd_azqtnh.png\\\" width=\\\"72\\\" height=\\\"72\\\" alt=\\\"Fitness Guy\\\" style=\\\"display:block;border:0;width:72px;height:72px;\\\">\\n</td></tr>\\n<tr><td class=\\\"card\\\" dir=\\\"rtl\\\" style=\\\"background:#1c2227;border-top:3px solid #13e3e6;padding:36px 36px 32px;text-align:right;\\\">\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\">\\n<tr>\\n<td width=\\\"76\\\" valign=\\\"middle\\\" style=\\\"padding:0 0 0 16px;\\\">\\n<img src=\\\"https://res.cloudinary.com/dmrksuz8a/image/upload/c_thumb,g_face,w_176,h_176,z_0.75/r_max,bo_4px_solid_rgb:13e3e6/f_png/v1790336253/coach.png\\\" width=\\\"64\\\" height=\\\"64\\\" alt=\\\"המאמן של Fitness Guy\\\" style=\\\"display:block;border:0;width:64px;height:64px;\\\">\\n</td>\\n<td dir=\\\"rtl\\\" valign=\\\"middle\\\" style=\\\"font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:17px;line-height:1.5;color:#9aa4ac;text-align:right;\\\">\\nהיי %NAME%,\\n</td>\\n</tr>\\n</table>\\n<h1 class=\\\"h1\\\" dir=\\\"rtl\\\" style=\\\"margin:20px 0 24px;font-family:'Noto Sans Hebrew',Arial,sans-serif;font-weight:900;font-size:32px;line-height:1.15;color:#eceef0;text-align:right;\\\">המסלול שלכם מוכן</h1>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\">\\n<tr><td dir=\\\"rtl\\\" style=\\\"background:#242c32;border-right:4px solid #13e3e6;padding:20px 22px;text-align:right;\\\">\\n<p style=\\\"margin:0 0 4px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:14px;color:#9aa4ac;\\\">המסלול שמתאים לכם</p>\\n<p class=\\\"track\\\" dir=\\\"ltr\\\" style=\\\"margin:0 0 12px;font-family:'Noto Sans Hebrew',Arial,sans-serif;font-weight:900;font-size:28px;line-height:1.2;color:#13e3e6;text-align:right;\\\">%TRACK%</p>\\n<p style=\\\"margin:0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:16px;line-height:1.7;color:#eceef0;\\\">%WHY%</p>\\n</td></tr>\\n</table>\\n<p style=\\\"margin:32px 0 14px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-weight:700;font-size:17px;color:#eceef0;\\\">מה קורה עכשיו</p>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\">\\n<tr>\\n<td width=\\\"34\\\" valign=\\\"top\\\" style=\\\"font-family:'Noto Sans Hebrew',Arial,sans-serif;font-weight:900;font-size:20px;line-height:1.4;color:#13e3e6;\\\">1</td>\\n<td dir=\\\"rtl\\\" style=\\\"padding:0 0 12px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:16px;line-height:1.6;color:#eceef0;text-align:right;\\\">מתחברים לבוט שלנו בטלגרם, לשאלות, לליווי ולתזכורות שקילה.</td>\\n</tr>\\n<tr>\\n<td width=\\\"34\\\" valign=\\\"top\\\" style=\\\"font-family:'Noto Sans Hebrew',Arial,sans-serif;font-weight:900;font-size:20px;line-height:1.4;color:#13e3e6;\\\">2</td>\\n<td dir=\\\"rtl\\\" style=\\\"padding:0 0 12px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:16px;line-height:1.6;color:#eceef0;text-align:right;\\\">מאמן מהצוות יוצר איתכם קשר.</td>\\n</tr>\\n<tr>\\n<td width=\\\"34\\\" valign=\\\"top\\\" style=\\\"font-family:'Noto Sans Hebrew',Arial,sans-serif;font-weight:900;font-size:20px;line-height:1.4;color:#13e3e6;\\\">3</td>\\n<td dir=\\\"rtl\\\" style=\\\"padding:0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:16px;line-height:1.6;color:#eceef0;text-align:right;\\\">מתחילים בשיחת אפיון, ומשם בונים את התוכנית.</td>\\n</tr>\\n</table>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\" style=\\\"margin:32px 0 0;\\\">\\n<tr><td align=\\\"center\\\">\\n<table role=\\\"presentation\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\">\\n<tr><td bgcolor=\\\"#13e3e6\\\" style=\\\"background:#13e3e6;\\\">\\n<a href=\\\"%TG_URL%\\\" style=\\\"display:block;text-decoration:none;\\\">\\n<img src=\\\"https://res.cloudinary.com/dmrksuz8a/image/upload/v1790424114/email-telegram-button.png\\\" width=\\\"340\\\" height=\\\"56\\\" alt=\\\"פתיחת הבוט בטלגרם\\\" style=\\\"display:block;border:0;width:340px;max-width:100%;height:auto;background:#13e3e6;color:#06232b;font-family:Arial,sans-serif;font-weight:700;font-size:17px;line-height:56px;text-align:center;\\\">\\n</a>\\n</td></tr>\\n</table>\\n</td></tr>\\n<tr><td dir=\\\"rtl\\\" align=\\\"center\\\" style=\\\"padding:14px 0 0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:14px;line-height:1.6;color:#9aa4ac;text-align:center;\\\">\\nכשהבוט יבקש, מסרו לו את אותו מספר טלפון שהשארתם באתר, והוא יזהה אתכם.\\n</td></tr>\\n</table>\\n</td></tr>\\n<tr><td dir=\\\"rtl\\\" align=\\\"center\\\" style=\\\"padding:24px 12px 0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:13px;line-height:1.6;color:#6b737b;text-align:center;\\\">\\nקיבלתם את המייל כי מילאתם את טופס ההתאמה באתר שלנו.<br>\\nאם זה לא אתם, אפשר פשוט להתעלם ממנו.\\n</td></tr>\\n</table>\\n</td></tr>\\n</table>\\n</body>\\n</html>\";\nconst TEAM_TEMPLATE = \"<!DOCTYPE html>\\n<html lang=\\\"he\\\" dir=\\\"rtl\\\">\\n<head>\\n<meta charset=\\\"utf-8\\\">\\n<meta name=\\\"viewport\\\" content=\\\"width=device-width, initial-scale=1\\\">\\n<title>ליד חדש מהאתר</title>\\n<link href=\\\"https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@900&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&display=swap\\\" rel=\\\"stylesheet\\\">\\n<style>\\nbody { margin: 0; padding: 0; background: #eef0f2; }\\n@media (max-width: 620px) {\\n.card { padding: 24px 18px !important; }\\n.name { font-size: 24px !important; }\\n.act { display: block !important; width: 100% !important; padding: 0 0 10px !important; }\\n.act a { display: block !important; }\\n}\\n</style>\\n</head>\\n<body style=\\\"margin:0;padding:0;background:#eef0f2;\\\">\\n<div style=\\\"display:none;max-height:0;overflow:hidden;opacity:0;color:#eef0f2;\\\">%PREHEADER%</div>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\" style=\\\"background:#eef0f2;\\\">\\n<tr><td align=\\\"center\\\" style=\\\"padding:24px 12px;\\\">\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\" style=\\\"max-width:600px;\\\">\\n<tr><td dir=\\\"rtl\\\" style=\\\"background:#12161a;border-top:3px solid #13e3e6;padding:14px 20px;\\\">\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\">\\n<tr>\\n<td width=\\\"48\\\" valign=\\\"middle\\\" style=\\\"padding:0 0 0 12px;\\\">\\n<img src=\\\"https://res.cloudinary.com/dmrksuz8a/image/upload/e_trim/w_50,h_50,c_fit/w_72,h_72,c_pad,b_rgb:eceef0/r_max/f_png/v1781354090/Gemini_Generated_Image_5xbjy55xbjy55xbjd_azqtnh.png\\\" width=\\\"36\\\" height=\\\"36\\\" alt=\\\"Fitness Guy\\\" style=\\\"display:block;border:0;width:36px;height:36px;\\\">\\n</td>\\n<td dir=\\\"rtl\\\" valign=\\\"middle\\\" style=\\\"font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-weight:700;font-size:16px;color:#eceef0;text-align:right;\\\">ליד חדש מהאתר</td>\\n<td dir=\\\"ltr\\\" valign=\\\"middle\\\" style=\\\"font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:13px;color:#9aa4ac;text-align:left;\\\">%TIME%</td>\\n</tr>\\n</table>\\n</td></tr>\\n<tr><td class=\\\"card\\\" dir=\\\"rtl\\\" style=\\\"background:#ffffff;padding:28px 28px 24px;text-align:right;\\\">\\n<p class=\\\"name\\\" style=\\\"margin:0 0 10px;font-family:'Noto Sans Hebrew',Arial,sans-serif;font-weight:900;font-size:28px;line-height:1.2;color:#12161a;\\\">%NAME%</p>\\n<p style=\\\"margin:0 0 22px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:15px;color:#4a5056;\\\">\\n<span dir=\\\"ltr\\\" style=\\\"display:inline-block;background:#06232b;color:#13e3e6;font-weight:700;font-size:14px;padding:5px 12px;\\\">%TRACK%</span>\\n&nbsp;·&nbsp; מטרה: %GOAL%\\n</p>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\" style=\\\"border-top:1px solid #dbdfe3;border-bottom:1px solid #dbdfe3;\\\">\\n<tr>\\n<td style=\\\"padding:12px 0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:14px;color:#6b737b;width:70px;\\\">טלפון</td>\\n<td dir=\\\"ltr\\\" style=\\\"padding:12px 0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:16px;color:#12161a;text-align:right;\\\"><a href=\\\"tel:%PHONE%\\\" style=\\\"color:#12161a;text-decoration:none;\\\">%PHONE_DISPLAY%</a></td>\\n</tr>\\n<tr>\\n<td style=\\\"padding:0 0 12px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:14px;color:#6b737b;\\\">אימייל</td>\\n<td dir=\\\"ltr\\\" style=\\\"padding:0 0 12px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:16px;color:#12161a;text-align:right;\\\"><a href=\\\"mailto:%EMAIL%\\\" style=\\\"color:#12161a;text-decoration:none;\\\">%EMAIL%</a></td>\\n</tr>\\n</table>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\" style=\\\"margin:18px 0 22px;\\\">\\n<tr>\\n<td class=\\\"act\\\" width=\\\"50%\\\" style=\\\"padding:0 0 0 6px;\\\">\\n<a href=\\\"tel:%PHONE%\\\" style=\\\"display:block;background:#13e3e6;color:#06232b;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-weight:700;font-size:16px;text-decoration:none;padding:14px 10px;text-align:center;\\\">להתקשר</a>\\n</td>\\n<td class=\\\"act\\\" width=\\\"50%\\\" style=\\\"padding:0 6px 0 0;\\\">\\n<a href=\\\"mailto:%EMAIL%?subject=%MAIL_SUBJECT%\\\" style=\\\"display:block;background:#ffffff;border:2px solid #12161a;color:#12161a;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-weight:700;font-size:16px;text-decoration:none;padding:12px 10px;text-align:center;\\\">לשלוח מייל</a>\\n</td>\\n</tr>\\n</table>\\n<table role=\\\"presentation\\\" dir=\\\"rtl\\\" width=\\\"100%\\\" cellpadding=\\\"0\\\" cellspacing=\\\"0\\\" border=\\\"0\\\">\\n<tr><td dir=\\\"rtl\\\" style=\\\"background:#f4f6f7;border-right:4px solid #0aa9ad;padding:16px 18px;text-align:right;\\\">\\n<p style=\\\"margin:0 0 4px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-weight:700;font-size:14px;color:#4a5056;\\\">מה העסיק אותו</p>\\n<p style=\\\"margin:0 0 14px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:15px;line-height:1.6;color:#12161a;\\\">%SUMMARY%</p>\\n<p style=\\\"margin:0 0 4px;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-weight:700;font-size:14px;color:#4a5056;\\\">הנימוק שהלקוח קיבל</p>\\n<p style=\\\"margin:0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:15px;line-height:1.6;color:#12161a;\\\">%WHY%</p>\\n</td></tr>\\n</table>\\n<p style=\\\"margin:18px 0 0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:13px;line-height:1.7;color:#6b737b;\\\">\\n%CHAT% &nbsp;·&nbsp; דיוור: %MARKETING%\\n</p>\\n</td></tr>\\n<tr><td dir=\\\"rtl\\\" align=\\\"center\\\" style=\\\"padding:16px 12px 0;font-family:'IBM Plex Sans Hebrew',Arial,sans-serif;font-size:12px;color:#8a9199;text-align:center;\\\">\\nנשלח אוטומטית מטופס ההתאמה באתר. כרטיס הלקוח כבר נשמר במערכת.\\n</td></tr>\\n</table>\\n</td></tr>\\n</table>\\n</body>\\n</html>\";\n\nconst esc = (v) => String(v ?? '').replace(/[&<>\"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;', \"'\": '&#39;' })[c]);\nconst fill = (tpl, data) => tpl.replace(/%([A-Z_]+)%/g, (m, k) => (k in data ? data[k] : m));\n\nconst lead = $('אימות ונרמול').first().json;\nconst result = $('תוצאה').first().json;\nconst cfg = $('הגדרות').first().json;\nconst p = lead.phone;\nconst phoneDisplay = p.length === 10 ? `${p.slice(0, 3)}-${p.slice(3, 6)}-${p.slice(6)}` : p;\n\nconst data = {\n  NAME: esc(lead.name),\n  TRACK: esc(result.track),\n  WHY: esc(result.why),\n  SUMMARY: esc(result.summary),\n  GOAL: esc(lead.goal_label),\n  EMAIL: esc(lead.email),\n  PHONE: esc(p),\n  PHONE_DISPLAY: esc(phoneDisplay),\n  TG_URL: esc(cfg.telegram_url),\n  TIME: $now.setZone('Asia/Jerusalem').toFormat('dd/MM HH:mm'),\n  CHAT: $('הכנת הבקשה').first().json.had_chat ? 'שוחח עם הבוט באתר לפני הטופס' : 'לא שוחח עם הבוט לפני הטופס',\n  MARKETING: lead.marketing ? 'אישר' : 'לא אישר',\n  MAIL_SUBJECT: encodeURIComponent('Fitness Guy: ההתאמה שלך'),\n};\n\nreturn [{ json: {\n  lead_subject: `המסלול שמתאים לכם ב-Fitness Guy: ${result.track}`,\n  lead_html: fill(LEAD_TEMPLATE, { ...data, PREHEADER: esc(`המסלול שמתאים לכם: ${result.track} · הצעד הבא בטלגרם`) }),\n  team_subject: `ליד חדש מהאתר: ${lead.name} · ${result.track}`,\n  team_html: fill(TEAM_TEMPLATE, { ...data, PREHEADER: esc(`${lead.goal_label} · ${phoneDisplay}`) }),\n} }];\n\n"
+      },
+      "id": "afcd8e78-aeb8-424c-9c5d-9e3dc99e7c57",
+      "name": "בניית מיילים",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2672,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "combinator": "and",
+          "conditions": [
+            {
+              "leftValue": "={{ $json.had_chat }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "ea2f748c-c153-4755-a778-1cb33f362b74",
+      "name": "הייתה שיחה?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1760,
+        112
+      ]
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt }}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "id": "4f916187-5a2e-42c9-8d7c-1c34210482ae",
+      "name": "התאמה לפי שיחה",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1984,
+        0
+      ],
+      "retryOnFail": true,
+      "maxTries": 2,
+      "waitBetweenTries": 1000,
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook – ליד": {
+      "main": [
+        [
+          {
+            "node": "הגדרות",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "הגדרות": {
+      "main": [
+        [
+          {
+            "node": "אימות ונרמול",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "אימות ונרמול": {
+      "main": [
+        [
+          {
+            "node": "תקין?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "תקין?": {
+      "main": [
+        [
+          {
+            "node": "יצירת משימה",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond – שגיאת קלט",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "יצירת משימה": {
+      "main": [
+        [
+          {
+            "node": "Respond – job_id",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Respond – job_id": {
+      "main": [
+        [
+          {
+            "node": "שיחת האתר",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "שיחת האתר": {
+      "main": [
+        [
+          {
+            "node": "הכנת הבקשה",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "תוצאה": {
+      "main": [
+        [
+          {
+            "node": "משימה – הושלמה",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "משימה – הושלמה": {
+      "main": [
+        [
+          {
+            "node": "כרטיס לקוח",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "מייל לצוות": {
+      "main": [
+        [
+          {
+            "node": "מייל ללקוח",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Webhook – סטטוס": {
+      "main": [
+        [
+          {
+            "node": "קריאת משימה",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "קריאת משימה": {
+      "main": [
+        [
+          {
+            "node": "Respond – סטטוס",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "כרטיס לקוח": {
+      "main": [
+        [
+          {
+            "node": "בניית מיילים",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "בניית מיילים": {
+      "main": [
+        [
+          {
+            "node": "מייל לצוות",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "הכנת הבקשה": {
+      "main": [
+        [
+          {
+            "node": "הייתה שיחה?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "הייתה שיחה?": {
+      "main": [
+        [
+          {
+            "node": "התאמה לפי שיחה",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "תוצאה",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "התאמה לפי שיחה": {
+      "main": [
+        [
+          {
+            "node": "תוצאה",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "תוצאה",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "התאמה לפי שיחה",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "מבנה התשובה": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "התאמה לפי שיחה",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "mYRljPDGJ6yqTZXF"
+  },
+  "versionId": "eefef6d9-dca3-4e2c-a622-a01ed9870dbe",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "93176429ca068ee92069e0c3cc136126d7f874a8c447eeb431a0f621b7f4bc6b"
+  },
+  "nodeGroups": [],
+  "id": "X5Rp0tonW8dP2Vyj",
+  "tags": []
+}

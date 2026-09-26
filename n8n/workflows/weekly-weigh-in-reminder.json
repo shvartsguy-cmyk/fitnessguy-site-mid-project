@@ -1,0 +1,258 @@
+{
+  "name": "Weekly Weigh-in Reminder - FitnessGuy",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtHour": 8
+            }
+          ]
+        }
+      },
+      "id": "0067fd94-d510-4a05-b98f-672bc4b01283",
+      "name": "Every Sunday 08:00",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        0,
+        0
+      ],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "members",
+        "returnAll": true
+      },
+      "id": "4d3bef38-d7b0-4c6e-ad5c-a422ba41e74e",
+      "name": "Get All Members",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "supabaseApi": {
+          "id": "8S131kZl9i6E5hNl",
+          "name": "FitnessGuy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "tableId": "weight_tracking",
+        "returnAll": true,
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "date",
+              "condition": "gte",
+              "keyValue": "={{ $now.setZone('Asia/Jerusalem').minus({ days: 6 }).toFormat('yyyy-MM-dd') }}"
+            }
+          ]
+        }
+      },
+      "id": "9ea3f452-bcf1-4960-99d0-e5dfcbce4826",
+      "name": "Get Last 7 Days Weights",
+      "type": "n8n-nodes-base.supabase",
+      "typeVersion": 1,
+      "position": [
+        448,
+        0
+      ],
+      "executeOnce": true,
+      "alwaysOutputData": true,
+      "credentials": {
+        "supabaseApi": {
+          "id": "8S131kZl9i6E5hNl",
+          "name": "FitnessGuy"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Members with a connected Telegram who have no weigh-in in the last 7 days.\n// Site leads without telegram_id can't receive a Telegram reminder, so they are skipped.\nconst members = $('Get All Members').all().map(i => i.json).filter(m => m.telegram_id);\nconst weighed = new Set($('Get Last 7 Days Weights').all().map(i => String(i.json.telegram_id)));\n\nreturn members\n  .filter(m => !weighed.has(String(m.telegram_id)))\n  .map(m => ({ json: m }));\n"
+      },
+      "id": "8f3b4a3d-89a9-48b7-b6ff-8700d6553c28",
+      "name": "Filter Not Weighed in 7 Days",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        672,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $json.telegram_id }}",
+        "text": "בוקר טוב! יום ראשון — זמן לשקילה שבועית על קיבה ריקה 🏋️",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "id": "0ecd36f6-a95b-45d9-b0a9-ddae7909d775",
+      "name": "Send Weigh-in Reminder",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1120,
+        0
+      ],
+      "webhookId": "7fbf3671-7be5-4ffe-b4a9-9bf3c117e6e1",
+      "credentials": {
+        "telegramApi": {
+          "id": "dWMEK3jVXtJS3xAS",
+          "name": "FitnessGuy Bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "id": "c87985db-97ba-4dde-8a8c-947875e24c33",
+      "name": "Loop Members",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        896,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "content": "אוטומציה למעקב שקילות שבועי ומתן תזכורת במקרה הצורך.\n\n1. בדיקה כל ראשון ב8 בבוקר\n2. עובר על כל הלקוחות ובודק אם ביצעו שקילה בשבוע האחרון.\n3. קוד נוד שמטרתו לבצע סינון חכם בין 2 טבלאות, בודק את המתאמנים ומי שכבר ביצע שקילה שבועית הוא \nמסנן אותו החוצה ומחזיר רק את מי שצריך תזכורת\n4. שליחת הודעה חזרה דרך הטלגרם"
+      },
+      "id": "8303c570-d681-4fe5-88f1-36a3c4cdcc8b",
+      "name": "Sticky Note 8386d00f",
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        112,
+        304
+      ]
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -16,
+        160
+      ],
+      "id": "4e83c559-c241-4560-aa13-446988b00263",
+      "name": "When clicking ‘Execute workflow’"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Every Sunday 08:00": {
+      "main": [
+        [
+          {
+            "node": "Get All Members",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Members": {
+      "main": [
+        [
+          {
+            "node": "Get Last 7 Days Weights",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Weigh-in Reminder": {
+      "main": [
+        [
+          {
+            "node": "Loop Members",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Members": {
+      "main": [
+        [],
+        [
+          {
+            "node": "Send Weigh-in Reminder",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Last 7 Days Weights": {
+      "main": [
+        [
+          {
+            "node": "Filter Not Weighed in 7 Days",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Not Weighed in 7 Days": {
+      "main": [
+        [
+          {
+            "node": "Loop Members",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When clicking ‘Execute workflow’": {
+      "main": [
+        [
+          {
+            "node": "Get All Members",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": true,
+    "errorWorkflow": "mYRljPDGJ6yqTZXF",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "versionId": "3ec4aacd-c6c3-47e6-af40-3c2c5573a712",
+  "meta": {
+    "aiBuilderAssisted": true,
+    "builderVariant": "mcp",
+    "instanceId": "93176429ca068ee92069e0c3cc136126d7f874a8c447eeb431a0f621b7f4bc6b"
+  },
+  "nodeGroups": [],
+  "id": "O9LPyCcZLIG6apH2",
+  "tags": [
+    {
+      "updatedAt": "2026-08-12T14:43:00.414Z",
+      "createdAt": "2026-08-12T14:43:00.414Z",
+      "id": "VqQYDK9IyjMhudiJ",
+      "name": "AI Dev"
+    }
+  ]
+}
