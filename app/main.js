@@ -162,6 +162,17 @@ function renderReply(bubble, payload) {
     bubble.appendChild(document.createElement("br"));
     bubble.appendChild(a);
   }
+  // הבוט מפנה לקוחות קיימים לטלגרם; הטקסט עצמו לא לחיץ, אז מוסיפים קישור קבוע
+  if (typeof payload.reply === "string" && payload.reply.includes("t.me/fitnessguy1_bot")) {
+    const a = document.createElement("a");
+    a.href = "https://t.me/fitnessguy1_bot";
+    a.target = "_blank";
+    a.rel = "noopener";
+    a.textContent = "לפתוח את הבוט בטלגרם";
+    a.className = "msg-link";
+    bubble.appendChild(document.createElement("br"));
+    bubble.appendChild(a);
+  }
 }
 
 /* נקודת מגע 1 עם השרת.
