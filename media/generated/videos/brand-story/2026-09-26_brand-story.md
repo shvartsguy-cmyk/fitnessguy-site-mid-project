@@ -59,3 +59,16 @@
   - המראה המצויר נשמר.
 
 **עלות כוללת לסרטון:** כ-$6 לארבעה קטעי וידאו, ועוד תמונות המפתח.
+
+## חיבור ופרסום
+
+- **העלאה ל-Cloudinary:**
+  - `brand-shot1-plateau` ‏(v1790438987)
+  - `brand-shot2-analysis` ‏(v1790438989)
+  - `brand-shot3-breakthrough` ‏(v1790438991)
+- **חיבור:** מעבר fade של 0.5 שניות בין השוטים, בלי קול. אורך כולל: 14.1 שניות.
+  `https://res.cloudinary.com/dmrksuz8a/video/upload/l_video:brand-shot2-analysis,fl_splice:transition_(name_fade;du_0.5)/fl_layer_apply/l_video:brand-shot3-breakthrough,fl_splice:transition_(name_fade;du_0.5)/fl_layer_apply/ac_none/q_auto/brand-shot1-plateau.mp4`
+- **באתר:** אזור `#story` ב-`app/index.html`.
+  - הכיתובים מתחלפים ב-4.6 וב-9.1 שניות, כלומר באמצע כל מעבר.
+  - הסרטון מתנגן רק כשהוא על המסך.
+  - מי שביקש במכשיר להפחית תנועה לא מקבל הפעלה אוטומטית.

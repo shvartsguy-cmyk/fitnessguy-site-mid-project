@@ -490,3 +490,48 @@ if (toTop) {
     document.getElementById("main").focus({ preventScroll: true });
   });
 }
+
+/* ---------- סרטון העסק ---------- */
+
+const storyFilm = document.getElementById("story-film");
+const storyVideo = document.getElementById("story-video");
+const storyToggle = document.getElementById("story-toggle");
+
+if (storyFilm && storyVideo && storyToggle) {
+  const caps = [...storyFilm.querySelectorAll(".story-cap")];
+  // מי שעצר ידנית לא מקבל הפעלה אוטומטית כשהוא גולל חזרה
+  let userPaused = prefersReduced;
+
+  const syncCaption = () => {
+    const t = storyVideo.currentTime;
+    let current = caps[0];
+    caps.forEach((c) => { if (t >= parseFloat(c.dataset.from)) current = c; });
+    caps.forEach((c) => c.classList.toggle("is-on", c === current));
+  };
+
+  const syncButton = () => {
+    const playing = !storyVideo.paused;
+    storyFilm.classList.toggle("is-playing", playing);
+    storyToggle.setAttribute("aria-label", playing ? "עצירת הסרטון" : "הפעלת הסרטון");
+  };
+
+  storyVideo.addEventListener("timeupdate", syncCaption);
+  storyVideo.addEventListener("play", syncButton);
+  storyVideo.addEventListener("pause", syncButton);
+
+  storyToggle.addEventListener("click", () => {
+    if (storyVideo.paused) {
+      userPaused = false;
+      storyVideo.play().catch(() => {});
+    } else {
+      userPaused = true;
+      storyVideo.pause();
+    }
+  });
+
+  // מתנגן רק כשהוא על המסך, כדי לא לבזבז נתונים וסוללה
+  new IntersectionObserver(([entry]) => {
+    if (entry.isIntersecting && !userPaused) storyVideo.play().catch(() => {});
+    else if (!entry.isIntersecting) storyVideo.pause();
+  }, { threshold: 0.4 }).observe(storyFilm);
+}

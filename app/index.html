@@ -198,13 +198,30 @@
     </div>
   </section>
 
-  <section>
+  <section class="story" id="story">
     <div class="wrap">
-      <h2>איך נראה שבוע עבודה איתנו</h2>
-      <p class="lede">מהעלאת סרטון הטכניקה עד יום חמישי בערב, ועד הפידבק המצולם שמגיע אליכם עד מוצאי שבת.</p>
-      <div class="media-frame">
-        <p>כאן ייכנס סרטון ההדגמה שנייצר ב-AI</p>
-      </div>
+      <h2>מתקיעה לפריצה, ב-14 שניות</h2>
+      <p class="lede">ככה זה נראה אצלנו: אתם שולחים סרטון מהאימון, המאמן מוצא מה עוצר אתכם, והתוכנית משתנה בהתאם.</p>
+
+      <figure class="story-film" id="story-film">
+        <video id="story-video" muted loop playsinline preload="metadata"
+               poster="https://res.cloudinary.com/dmrksuz8a/video/upload/so_0,w_1280/f_auto,q_auto/v1790438987/brand-shot1-plateau.jpg"
+               aria-describedby="story-desc">
+          <source src="https://res.cloudinary.com/dmrksuz8a/video/upload/l_video:brand-shot2-analysis,fl_splice:transition_(name_fade;du_0.5)/fl_layer_apply/l_video:brand-shot3-breakthrough,fl_splice:transition_(name_fade;du_0.5)/fl_layer_apply/ac_none/q_auto/brand-shot1-plateau.mp4" type="video/mp4">
+        </video>
+        <div class="story-captions" aria-hidden="true">
+          <p class="story-cap is-on" data-from="0">שבועיים באותם משקלים?</p>
+          <p class="story-cap" data-from="4.6">ניתוח. תוכנית. מעקב.</p>
+          <p class="story-cap" data-from="9.1">ואז, פריצה.</p>
+        </div>
+        <button class="story-toggle" id="story-toggle" type="button" aria-label="הפעלת הסרטון">
+          <svg class="i-play" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor"/></svg>
+          <svg class="i-pause" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z" fill="currentColor"/></svg>
+        </button>
+        <figcaption class="sr-only" id="story-desc">סרטון ללא קול, שלושה שוטים: מתאמן נתקע באמצע סקוואט והמוט לא עולה. המאמן בוחן את הסרטון שלו בטאבלט ומסמן את מסלול המוט. אותו מתאמן, עם יותר משקל, משלים חזרה ומחייך.</figcaption>
+      </figure>
+
+      <p class="story-cta"><a class="btn btn-primary" href="#apply">בדקו אם אתם מתאימים</a></p>
     </div>
   </section>
 
