@@ -6,8 +6,8 @@
 
 const ENDPOINTS = {
   chat: "https://guy1023.app.n8n.cloud/webhook/fitnessguy/chat", // webhook של הסוכן ב-n8n
-  lead: null, // webhook שמקבל את טופס הליד
-  leadStatus: null, // נקודת polling לתוצאת ההתאמה
+  lead: "https://guy1023.app.n8n.cloud/webhook/fitnessguy/lead", // webhook שמקבל את טופס הליד
+  leadStatus: "https://guy1023.app.n8n.cloud/webhook/fitnessguy/lead-status", // נקודת polling לתוצאת ההתאמה
 };
 
 /* דגלים גלובליים שמשמשים כמה סקציות בהמשך הקובץ (מסך טעינה, זרקור, גרף,
@@ -288,10 +288,12 @@ async function submitLead(payload) {
     if (!res.ok) throw new Error("bad response");
     const { job_id } = await res.json();
 
-    for (let i = 0; i < 20; i++) {
+    // ההתאמה רצה מול מודל ומאגר הידע, כ-25 שניות. ממתינים עד דקה.
+    for (let i = 0; i < 40; i++) {
       await new Promise((r) => setTimeout(r, 1500));
-      const s = await fetch(`${ENDPOINTS.leadStatus}?job_id=${job_id}`);
+      const s = await fetch(`${ENDPOINTS.leadStatus}?job_id=${encodeURIComponent(job_id)}`);
       const data = await s.json();
+      if (data.error) throw new Error("match failed");
       if (data.done) return data;
     }
     throw new Error("timeout");
