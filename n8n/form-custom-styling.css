@@ -1,0 +1,117 @@
+/* עיצוב טופס n8n בשפה של אתר Fitness Guy (app/styles.css)
+   להדביק ב-Form Trigger → Options → Custom Form Styling */
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Hebrew:wght@900&family=IBM+Plex+Sans+Hebrew:wght@400;600;700&display=swap');
+
+:root {
+	--font-family: 'IBM Plex Sans Hebrew', 'Arial Hebrew', Arial, sans-serif;
+	--font-weight-normal: 400;
+	--font-weight-bold: 600;
+	--font-size-body: 15px;
+	--font-size-label: 15px;
+	--font-size-test-notice: 13px;
+	--font-size-input: 16px;
+	--font-size-header: 26px;
+	--font-size-paragraph: 15px;
+	--font-size-link: 13px;
+	--font-size-error: 13px;
+	--font-size-html-h1: 30px;
+	--font-size-html-h2: 22px;
+	--font-size-html-h3: 18px;
+	--font-size-html-h4: 16px;
+	--font-size-html-h5: 14px;
+	--font-size-html-h6: 12px;
+	--font-size-subheader: 15px;
+
+	/* Colors */
+	--color-background: #12161a;
+	--color-test-notice-text: #13e3e6;
+	--color-test-notice-bg: #0e1114;
+	--color-test-notice-border: #0aa9ad;
+	--color-card-bg: #1c2227;
+	--color-card-border: #313840;
+	--color-card-shadow: rgba(0, 0, 0, 0.5);
+	--color-link: #9aa4ac;
+	--color-header: #eceef0;
+	--color-label: #eceef0;
+	--color-input-border: #313840;
+	--color-input-text: #eceef0;
+	--color-focus-border: #13e3e6;
+	--color-submit-btn-bg: #13e3e6;
+	--color-submit-btn-text: #06232b;
+	--color-error: #ff5c6c;
+	--color-required: #13e3e6;
+	--color-clear-button-bg: #4a5056;
+	--color-html-text: #eceef0;
+	--color-html-link: #13e3e6;
+	--color-header-subtext: #9aa4ac;
+
+	/* Border Radii — פינות חדות כמו באתר */
+	--border-radius-card: 2px;
+	--border-radius-input: 0px;
+	--border-radius-clear-btn: 50%;
+	--card-border-radius: 2px;
+
+	/* Spacing */
+	--padding-container-top: 40px;
+	--padding-card: 28px;
+	--padding-test-notice-vertical: 12px;
+	--padding-test-notice-horizontal: 24px;
+	--margin-bottom-card: 16px;
+	--padding-form-input: 13px;
+	--card-padding: 28px;
+	--card-margin-bottom: 16px;
+
+	/* Dimensions */
+	--container-width: 480px;
+	--submit-btn-height: 52px;
+	--checkbox-size: 18px;
+
+	/* Others */
+	--box-shadow-card: 0px 18px 50px 0px var(--color-card-shadow);
+	--opacity-placeholder: 0.55;
+}
+
+/* עברית מימין לשמאל */
+body {
+	direction: rtl;
+	text-align: right;
+	-webkit-font-smoothing: antialiased;
+}
+
+/* כותרת בפונט התצוגה של האתר */
+h1 {
+	font-family: 'Noto Sans Hebrew', 'Arial Hebrew', Arial, sans-serif;
+	font-weight: 900;
+	letter-spacing: -0.01em;
+}
+
+/* שדות על רקע כהה */
+input,
+textarea,
+select {
+	background-color: #12161a;
+}
+
+input:hover,
+textarea:hover,
+select:hover {
+	border-color: #4a5056;
+}
+
+/* צ'קבוקסים ורדיו בצבע המותג */
+input[type='checkbox'],
+input[type='radio'] {
+	accent-color: #13e3e6;
+}
+
+/* כפתור שליחה כמו btn-primary באתר */
+button[type='submit'] {
+	font-weight: 700;
+	border-radius: 0;
+	transition: background-color 0.18s ease;
+}
+
+button[type='submit']:hover {
+	background-color: #4ceef0;
+}
