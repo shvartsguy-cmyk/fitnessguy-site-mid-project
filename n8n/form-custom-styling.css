@@ -79,6 +79,33 @@ body {
 	-webkit-font-smoothing: antialiased;
 }
 
+/* לוגו — תג עגול בהיר שיושב על הקצה העליון של הכרטיס.
+   הרקע הבהיר נדרש כי חלקי המשקולת בלוגו שחורים ונעלמים על רקע כהה. */
+.card {
+	position: relative;
+	margin-top: 56px;
+	padding-top: 64px;
+	border-top: 2px solid #13e3e6;
+}
+
+.card::before {
+	content: '';
+	position: absolute;
+	top: -48px;
+	left: 50%;
+	transform: translateX(-50%);
+	width: 96px;
+	height: 96px;
+	border-radius: 50%;
+	background: #eceef0
+		url('https://res.cloudinary.com/dmrksuz8a/image/upload/e_trim/f_auto,q_auto,w_160/v1781354090/Gemini_Generated_Image_5xbjy55xbjy55xbjd_azqtnh.png')
+		center / 66px no-repeat;
+	box-shadow:
+		0 0 0 4px #1c2227,
+		0 0 0 6px #13e3e6,
+		0 10px 30px rgba(19, 227, 230, 0.25);
+}
+
 /* כותרת בפונט התצוגה של האתר */
 h1 {
 	font-family: 'Noto Sans Hebrew', 'Arial Hebrew', Arial, sans-serif;
