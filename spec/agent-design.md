@@ -106,33 +106,12 @@ Telegram ───────►│ Telegram Trigger ─┐            ┌─�
 
 ## 6. Supabase
 
-⚠️ המבנה הקיים של הטבלאות לא נבדק מכאן. לפני ההרצה צריך להשוות מול הטבלאות בפועל.
+הפקודות נמצאות ב-[supabase-migration-2026-09-26.sql](supabase-migration-2026-09-26.sql), ונכתבו מול המבנה הקיים של הטבלאות:
 
-```sql
--- כרטיס הלקוח: הרחבה של members
-alter table members alter column telegram_id drop not null;
-alter table members add column if not exists email text;
-alter table members add column if not exists goal text;               -- mass / cut / plateau / unsure
-alter table members add column if not exists recommended_track text;
-alter table members add column if not exists summary text;            -- תקציר שיחת האתר
-alter table members add column if not exists source text default 'telegram';  -- web / telegram
-alter table members add column if not exists marketing_consent boolean default false;
-alter table members add column if not exists created_at timestamptz default now();
-create unique index if not exists members_phone_key on members (phone);
-
--- משימות הטופס, בשביל ה-polling
-create table if not exists lead_jobs (
-  job_id uuid primary key default gen_random_uuid(),
-  status text not null default 'pending',  -- pending / done / error
-  track text,
-  why text,
-  created_at timestamptz default now()
-);
-
--- תיעוד שיחות משני הערוצים
-alter table chat_logs add column if not exists channel text default 'telegram';
-alter table chat_logs add column if not exists user_key text;
-```
+- **`members` הופכת לכרטיס לקוח.** המפתח הראשי עובר לעמודת `id` חדשה, כי ליד מהאתר עוד אין לו `telegram_id`. `telegram_id` הופך לרשות אבל נשאר ייחודי. נוספות העמודות מייל, מטרה, מסלול מומלץ, תקציר, מקור והסכמה לדיוור.
+- **טלפון בספרות בלבד**, בשתי הטבלאות, עם אינדקס ייחודי על הטלפון ב-`members`. כך `050-1234567` מהאתר ו-`0501234567` מטלגרם מזוהים כאותו אדם. הוורקפלואים מנרמלים כל טלפון לפני שמירה או חיפוש.
+- **`lead_jobs`:** טבלה חדשה למשימות הטופס, בשביל ה-polling.
+- **`chat_logs`:** עמודות `channel` ו-`user_key`, כדי לתעד את שני הערוצים ולשלוף שיחת אתר לפי `session_id`.
 
 ## 7. חוזים מול האתר
 
