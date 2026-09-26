@@ -889,6 +889,61 @@ section {
   font-size: 0.86rem;
 }
 
+/* ---------- חזרה לראש העמוד ---------- */
+
+/* בצד ימין, מול כפתור הצ'אט שבשמאל. מופיע אחרי מסך גלילה אחד (is-visible, מ-main.js). */
+.to-top {
+  position: fixed;
+  right: 1.25rem;
+  bottom: 1.25rem;
+  z-index: var(--z-chat-btn);
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--surface-hi);
+  border: 1px solid var(--iron);
+  color: var(--accent);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(12px);
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s linear 0.25s, background 0.2s ease;
+}
+
+.to-top.is-visible {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition: opacity 0.25s ease, transform 0.25s ease, visibility 0s, background 0.2s ease;
+}
+
+.to-top:hover {
+  background: var(--accent);
+  color: var(--accent-ink);
+}
+
+.to-top:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 640px) {
+  .to-top {
+    right: 0.85rem;
+    bottom: 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .to-top,
+  .to-top.is-visible {
+    transform: none;
+    transition: none;
+  }
+}
+
 /* ---------- ווידג'ט צ'אט ---------- */
 
 /* הדמות "נשענת" במרפק על קצה הכפתור בלי לגעת בו. היחסים נגזרים מהתמונה:
@@ -1293,4 +1348,8 @@ header.nav, main, footer.foot {
 
 @media (prefers-reduced-motion: reduce) {
   @view-transition { navigation: none; }
+}
+
+#main:focus {
+  outline: none;
 }

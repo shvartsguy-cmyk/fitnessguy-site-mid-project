@@ -473,3 +473,20 @@ if (!prefersReduced && canHover) {
     btn.addEventListener("pointerleave", () => { btn.style.transform = ""; });
   });
 }
+
+/* ---------- חזרה לראש העמוד ---------- */
+
+const toTop = document.getElementById("to-top");
+
+if (toTop) {
+  const syncToTop = () => toTop.classList.toggle("is-visible", window.scrollY > window.innerHeight);
+  window.addEventListener("scroll", syncToTop, { passive: true });
+  syncToTop();
+
+  toTop.addEventListener("click", (e) => {
+    e.preventDefault();
+    window.scrollTo({ top: 0, behavior: prefersReduced ? "auto" : "smooth" });
+    // המיקוד עובר לראש התוכן, כדי שמשתמש מקלדת לא יישאר בתחתית
+    document.getElementById("main").focus({ preventScroll: true });
+  });
+}
