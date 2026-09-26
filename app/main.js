@@ -123,7 +123,10 @@ if (chat && chatForm) {
     const thinking = addMessage("…", "bot");
 
     try {
-      const payload = await askBot(text);
+      const payload = await askBot(text, (partial) => {
+        thinking.textContent = partial;
+        chatLog.scrollTop = chatLog.scrollHeight;
+      });
       renderReply(thinking, payload);
     } catch {
       thinking.textContent =
@@ -162,18 +165,49 @@ function renderReply(bubble, payload) {
 }
 
 /* נקודת מגע 1 עם השרת.
- * חוזה: POST { session_id, message } → { reply }
+ * חוזה: POST { session_id, message }. התשובה מוזרמת כשורות JSON:
+ * {"type":"begin"} ואז {"type":"item","content":"..."} לכל קטע, ובסוף {"type":"end"}.
+ * onPartial מקבל את הטקסט שהצטבר עד כה, כדי שהתשובה תופיע תוך כדי כתיבה.
  * עד לחיבור n8n — מענה מדומה מתוך אותן עובדות שיושבות במאגר הידע. */
-async function askBot(message) {
+async function askBot(message, onPartial = () => {}) {
   if (ENDPOINTS.chat) {
     const res = await fetch(ENDPOINTS.chat, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ session_id: sessionId(), message }),
     });
-    if (!res.ok) throw new Error("bad response");
-    const data = await res.json();
-    return data;
+    if (!res.ok || !res.body) throw new Error("bad response");
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+    let reply = "";
+
+    const handle = (line) => {
+      if (!line.trim()) return;
+      const chunk = JSON.parse(line);
+      if (chunk.type === "item" && typeof chunk.content === "string") {
+        reply += chunk.content;
+        onPartial(reply);
+      } else if (chunk.type === "error") {
+        throw new Error("stream error");
+      } else if (typeof chunk.reply === "string") {
+        reply = chunk.reply; // תשובה רגילה, לא מוזרמת
+      }
+    };
+
+    for (;;) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n");
+      buffer = lines.pop();
+      lines.forEach(handle);
+    }
+    handle(buffer + decoder.decode());
+
+    if (!reply.trim()) throw new Error("empty reply");
+    return { reply };
   }
 
   await new Promise((r) => setTimeout(r, 750));
