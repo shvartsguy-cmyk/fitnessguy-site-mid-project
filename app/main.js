@@ -256,12 +256,20 @@ const formErr = document.getElementById("form-err");
 const pending = document.getElementById("pending");
 const result = document.getElementById("result");
 
-const GOAL_TRACK = {
-  mass: ["The Builder", "בניית מסה דורשת עקביות ומעקב נתונים. המסלול הזה נותן תוכנית מתקדמת ועדכון חודשי, בלי התחייבות ארוכה."],
-  cut: ["The Builder", "חיטוב נשען על גירעון קלורי מדויק ומעקב שבועי. נתחיל בתוכנית תזונה מלאה וגיליון מעקב."],
-  plateau: ["The Plateau Breaker", "תקיעות מעל שבועיים דורשת אבחון של משולש ההתאוששות וניתוח טכניקה מצולם. זה בדיוק מה שהמסלול הזה עושה."],
-  unsure: ["The Foundation", "נתחיל משיחת אפיון ותוכנית ראשונית. משם נדע אם יש טעם להמשיך לליווי חודשי."],
+/* הדמיה בלבד, כשאין חיבור ל-n8n. אותם כללים כמו בשרת: המסלולים במאגר הידע
+ * נבדלים ברמת הניסיון — מתחילים ל-Foundation, תקועים ל-Plateau Breaker, השאר ל-Builder. */
+const TRACK_WHY = {
+  "The Foundation": "המסלול הזה מתאים לכם כי הוא נבנה למתאמנים מתחילים: שיחת אפיון, תוכנית אימון ראשונית והנחיות תזונה בסיסיות, בתשלום חד-פעמי.",
+  "The Builder": "המסלול הזה מתאים לכם כי אתם כבר מתאמנים ועובדים עצמאית: תוכנית אימונים מתקדמת, תוכנית תזונה ועדכון תוכנית כל חודש.",
+  "The Plateau Breaker": "המסלול הזה מתאים לכם כי הוא נבנה בדיוק לשבירת תקיעות: ליווי אישי צמוד וניתוח ביומכני שבועי של הטכניקה.",
 };
+const ruleTrack = ({ level, goal }) =>
+  level === "beginner" ? "The Foundation"
+    : level === "stuck" || goal === "plateau" ? "The Plateau Breaker"
+    : "The Builder";
+
+// מסך ההמתנה מוצג לפחות כך, כדי שתוצאה מיידית לא תהבהב ותיעלם
+const MIN_PENDING_MS = 1500;
 
 if (leadForm) {
   leadForm.addEventListener("submit", async (e) => {
@@ -270,8 +278,8 @@ if (leadForm) {
 
     const data = Object.fromEntries(new FormData(leadForm));
 
-    if (!data.name || !data.phone || !data.email || !data.goal) {
-      return fail("צריך למלא שם, טלפון, אימייל ומטרה.");
+    if (!data.name || !data.phone || !data.email || !data.goal || !data.level) {
+      return fail("צריך למלא שם, טלפון, אימייל, מטרה וניסיון.");
     }
     // כמו בבדיקת השרת: רק ספרות נחשבות, כך ש-050-000-0001 ו-050 0000001 שניהם תקינים
     if (!/^0\d{8,9}$/.test(String(data.phone).replace(/\D/g, ""))) {
@@ -283,6 +291,7 @@ if (leadForm) {
 
     leadForm.hidden = true;
     pending.hidden = false;
+    const shownAt = Date.now();
 
     try {
       const match = await submitLead({
@@ -290,6 +299,8 @@ if (leadForm) {
         marketing: leadForm.marketing.checked,
         session_id: sessionId(),
       });
+      const wait = MIN_PENDING_MS - (Date.now() - shownAt);
+      if (wait > 0) await new Promise((r) => setTimeout(r, wait));
       pending.hidden = true;
       result.hidden = false;
       document.getElementById("result-title").textContent =
@@ -328,9 +339,11 @@ async function submitLead(payload) {
     }
     const { job_id } = await res.json();
 
-    // ההתאמה רצה מול מודל ומאגר הידע, כ-25 שניות. ממתינים עד דקה.
-    for (let i = 0; i < 40; i++) {
-      await new Promise((r) => setTimeout(r, 1500));
+    // בלי שיחה קודמת ההתאמה לפי כללים מוכנה תוך שנייה; אחרי שיחה המודל מוסיף כמה שניות.
+    // בודקים מהר בהתחלה, ואחר כך כל שנייה וחצי, עד דקה וחצי.
+    const started = Date.now();
+    for (let i = 0; Date.now() - started < 90000; i++) {
+      await new Promise((r) => setTimeout(r, i < 3 ? 700 : 1500));
       const s = await fetch(`${ENDPOINTS.leadStatus}?job_id=${encodeURIComponent(job_id)}`);
       const data = await s.json();
       if (data.error) throw new Error("match failed");
@@ -339,9 +352,9 @@ async function submitLead(payload) {
     throw new Error("timeout");
   }
 
-  await new Promise((r) => setTimeout(r, 2600));
-  const [track, why] = GOAL_TRACK[payload.goal] || GOAL_TRACK.unsure;
-  return { track, why };
+  await new Promise((r) => setTimeout(r, 600));
+  const track = ruleTrack(payload);
+  return { track, why: TRACK_WHY[track] };
 }
 
 /* ---------- ניווט נייד ---------- */
