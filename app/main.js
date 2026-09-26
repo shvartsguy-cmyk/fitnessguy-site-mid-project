@@ -5,7 +5,7 @@
  */
 
 const ENDPOINTS = {
-  chat: null, // webhook של הסוכן ב-n8n
+  chat: "https://guy1023.app.n8n.cloud/webhook/fitnessguy/chat", // webhook של הסוכן ב-n8n
   lead: null, // webhook שמקבל את טופס הליד
   leadStatus: null, // נקודת polling לתוצאת ההתאמה
 };

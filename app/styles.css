@@ -1064,6 +1064,7 @@ section {
   font-size: 0.96rem;
   line-height: 1.6;
   max-width: 85%;
+  white-space: pre-line; /* תשובות הבוט מגיעות עם שורות ורשימות "•" */
 }
 
 .msg-bot {
