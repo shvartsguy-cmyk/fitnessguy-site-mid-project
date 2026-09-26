@@ -781,6 +781,25 @@ section {
   margin-bottom: 0.8rem;
 }
 
+.result-next {
+  margin: 1.25rem 0 1rem;
+  color: var(--bone-dim);
+  font-size: 0.96rem;
+}
+
+.btn-telegram {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+@media (max-width: 640px) {
+  .btn-telegram {
+    display: flex;
+    justify-content: center;
+  }
+}
+
 [hidden] {
   display: none !important;
 }

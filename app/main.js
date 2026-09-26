@@ -273,7 +273,8 @@ if (leadForm) {
     if (!data.name || !data.phone || !data.email || !data.goal) {
       return fail("צריך למלא שם, טלפון, אימייל ומטרה.");
     }
-    if (!/^0\d{1,2}-?\d{7}$/.test(String(data.phone).replace(/\s/g, ""))) {
+    // כמו בבדיקת השרת: רק ספרות נחשבות, כך ש-050-000-0001 ו-050 0000001 שניהם תקינים
+    if (!/^0\d{8,9}$/.test(String(data.phone).replace(/\D/g, ""))) {
       return fail("מספר הטלפון לא נראה תקין. פורמט לדוגמה: 050-0000000");
     }
     if (!leadForm.privacy.checked) {
@@ -295,10 +296,10 @@ if (leadForm) {
         "המסלול שמתאים לכם: " + match.track;
       document.getElementById("result-body").textContent = match.why;
       result.scrollIntoView({ block: "center" });
-    } catch {
+    } catch (err) {
       pending.hidden = true;
       leadForm.hidden = false;
-      fail("השליחה נכשלה. אפשר לנסות שוב, או לפנות בוואטסאפ 054-3035040.");
+      fail(err.userMessage || "השליחה נכשלה. אפשר לנסות שוב, או לפנות בוואטסאפ 054-3035040.");
     }
   });
 
@@ -319,7 +320,12 @@ async function submitLead(payload) {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
-    if (!res.ok) throw new Error("bad response");
+    if (!res.ok) {
+      // 400 מגיע עם הודעה ברורה מבדיקת השרת; מציגים אותה במקום הודעה כללית
+      const err = new Error("bad response");
+      try { err.userMessage = (await res.json()).error; } catch {}
+      throw err;
+    }
     const { job_id } = await res.json();
 
     // ההתאמה רצה מול מודל ומאגר הידע, כ-25 שניות. ממתינים עד דקה.
