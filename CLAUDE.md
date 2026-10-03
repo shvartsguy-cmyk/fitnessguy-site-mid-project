@@ -48,14 +48,16 @@
 
 | נקודה | שיטה | CORS |
 |-------|------|------|
-| `https://guy1023.app.n8n.cloud/webhook/fitnessguy/chat` | POST, תשובה בזרימה (NDJSON) | `http://localhost:8765` |
-| `https://guy1023.app.n8n.cloud/webhook/fitnessguy/lead` | POST, מחזיר `job_id` | `http://localhost:8765` |
-| `https://guy1023.app.n8n.cloud/webhook/fitnessguy/lead-status` | GET `?job_id=` | `http://localhost:8765` |
-
-⚠️ אחרי העלאה ל-Vercel, להוסיף את כתובת האתר ל-`allowedOrigins` בשלושתם.
+| `https://guy1023.app.n8n.cloud/webhook/fitnessguy/chat` | POST, תשובה בזרימה (NDJSON) | האתר ב-Vercel + `http://localhost:8765` |
+| `https://guy1023.app.n8n.cloud/webhook/fitnessguy/lead` | POST, מחזיר `job_id` | האתר ב-Vercel + `http://localhost:8765` |
+| `https://guy1023.app.n8n.cloud/webhook/fitnessguy/lead-status` | GET `?job_id=` | האתר ב-Vercel + `http://localhost:8765` |
 
 ### האתר
 
+- **אתר חי:** https://fitnessguy-site-mid-project-app.vercel.app
+  - Vercel מחובר לריפו `shvartsguy-cmyk/fitnessguy-site-mid-project`.
+  - Root Directory: `app`. רק התיקייה הזו מתפרסמת.
+  - כל push ל-`main` מעדכן את האתר.
 - **הרצה מקומית:**
   ```
   cd app && python -m http.server 8765
