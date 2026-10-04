@@ -946,16 +946,9 @@ section {
 
 .foot {
   border-top: var(--rule);
-  padding-block: 3rem 2.5rem;
+  /* תחתית גבוהה, כדי שהשורה האחרונה לא תוסתר מאחורי חץ החזרה למעלה */
+  padding-block: 3rem 6rem;
   background: var(--base-deep);
-}
-
-.foot-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  justify-content: space-between;
-  align-items: start;
 }
 
 .foot a {
@@ -993,9 +986,7 @@ section {
   font-size: 0.95rem;
 }
 
-/* כותרות הטורים מופיעות רק בטלפון, שם הטורים צריכים הסבר; במחשב הסידור ברור בלי */
 .foot-head {
-  display: none;
   margin: 0 0 0.4rem;
   font-size: 0.78rem;
   font-weight: 700;
@@ -1003,10 +994,35 @@ section {
   color: var(--iron);
 }
 
-/* טלפון: פרטי העסק בשורה מלאה, מתחתם שני טורים שמתחילים באותו גובה, ושורה תחתונה נפרדת */
-@media (max-width: 640px) {
+/* אותו מבנה בכל הגדלים: פרטי העסק, שני טורים עם כותרת שמתחילים באותו גובה,
+ * ושורה תחתונה נפרדת מתחת לקו. */
+.foot-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 1fr));
+  gap: 1.5rem 2.5rem;
+  /* במחשב דמות המאמן תופסת כ-310px בצד שמאל למטה; התוכן נשאר מימינה */
+  max-width: min(900px, calc(100vw - 380px));
+}
+
+.foot ul {
+  gap: 0;
+}
+
+.foot ul a {
+  display: block;
+  padding-block: 0.45rem;
+}
+
+.foot-bottom {
+  margin-top: 2rem;
+  padding-top: 1.25rem;
+  border-top: var(--rule);
+  max-width: min(900px, calc(100vw - 380px));
+}
+
+/* טאבלט וטלפון: פרטי העסק בשורה מלאה, ושני הטורים מתחתם */
+@media (max-width: 899px) {
   .foot-grid {
-    display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 1.5rem 1rem;
   }
@@ -1016,25 +1032,17 @@ section {
     padding-bottom: 1.5rem;
     border-bottom: var(--rule);
   }
+}
 
-  .foot-head {
-    display: block;
-  }
-
-  .foot ul {
-    gap: 0;
-  }
-
-  /* כ-40px גובה לכל קישור, כדי שלא ילחץ השכן בטעות */
-  .foot ul a {
-    display: block;
-    padding-block: 0.45rem;
+/* בטלפון הדמות מתכווצת לעיגול, אז אין צורך לשמור לה מקום בצד */
+@media (max-width: 640px) {
+  .foot-grid,
+  .foot-bottom {
+    max-width: none;
   }
 
   .foot-bottom {
     margin-top: 1.75rem;
-    padding-top: 1.25rem;
-    border-top: var(--rule);
   }
 
   .foot small {
