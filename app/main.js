@@ -36,7 +36,10 @@ function sessionId() {
 
 const loader = document.getElementById("loader");
 // הגרף מצויר רק כשמסך הטעינה נסגר, אחרת חלק מהאנימציה רץ מאחוריו
-const startChart = () => document.querySelector(".chart")?.classList.add("anim");
+const startChart = () => {
+  document.querySelector(".chart")?.classList.add("anim");
+  document.dispatchEvent(new Event("chart:start"));
+};
 
 if (loader) {
   window.addEventListener("load", () => {
@@ -139,18 +142,39 @@ if (chat && chatForm) {
 }
 
 if (chatDock) {
+  // בטלפון הדמות המלאה עומדת על הגרף שבפתיחה. לכן שם היא מתחילה כעיגול, מופיעה רק
+  // אחרי שהגרף סיים להצטייר (הקו עולה, נתקע ופורץ), נשארת כמה שניות כדי להזמין לצ'אט,
+  // וחוזרת לעיגול לצמיתות. במחשב ובטאבלט ההתנהגות כמו קודם.
+  const phoneMq = window.matchMedia("(max-width: 640px)");
+  const CHART_DRAW_MS = 3600; // משך ציור הגרף ב-CSS (.anim), כולל תווית "שבירת פלאטו"
+  const GREET_MS = 4000;
+  let greet = "before"; // before → on → done
   let queued = false;
+
   const updateDock = () => {
-    const compact = scrollY > 40;
+    const phoneHold = phoneMq.matches && greet !== "on";
+    const compact = scrollY > 40 || phoneHold;
     if (compact) chatDock.classList.add("was-compact");
     chatDock.classList.toggle("is-compact", compact);
     queued = false;
   };
+
+  const scheduleGreet = () => setTimeout(() => {
+    if (scrollY > 40) { greet = "done"; return; } // כבר גלל: אין צורך להציג
+    greet = "on";
+    updateDock();
+    setTimeout(() => { greet = "done"; updateDock(); }, GREET_MS);
+  }, prefersReduced ? 0 : CHART_DRAW_MS);
+
+  if (document.querySelector(".chart.anim")) scheduleGreet();
+  else document.addEventListener("chart:start", scheduleGreet, { once: true });
+
   addEventListener("scroll", () => {
     if (queued) return;
     queued = true;
     requestAnimationFrame(updateDock);
   }, { passive: true });
+  phoneMq.addEventListener("change", updateDock);
   updateDock();
 }
 
