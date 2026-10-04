@@ -991,7 +991,8 @@ section {
   font-size: 0.78rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--iron);
+  /* bone-dim: ניגודיות של כ-7:1 על רקע הפוטר (iron היה 2.4:1, מתחת לתקן) */
+  color: var(--bone-dim);
 }
 
 /* אותו מבנה בכל הגדלים: פרטי העסק, שני טורים עם כותרת שמתחילים באותו גובה,
@@ -1346,11 +1347,38 @@ section {
 .chat-form input {
   flex: 1;
   font-family: var(--text);
-  font-size: 0.97rem;
+  /* 16px לפחות: מתחת לזה Safari באייפון עושה זום לכל העמוד כשנוגעים בשדה */
+  font-size: 1rem;
   background: var(--surface);
   border: 1px solid var(--iron-lo);
   color: var(--bone);
   padding: 0.7rem 0.85rem;
+}
+
+/* טלפון: הצ'אט על כל המסך, כמו אפליקציית הודעות, כדי שתישאר שיחה גלויה גם כשהמקלדת פתוחה */
+@media (max-width: 640px) {
+  .chat {
+    inset: 0;
+    width: 100%;
+    height: 100dvh;
+    max-height: none;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .chat-close {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    font-size: 1.9rem;
+  }
+
+  html.chat-is-open,
+  html.chat-is-open body {
+    overflow: hidden;
+  }
 }
 
 .chat-form button {
@@ -1623,4 +1651,75 @@ header.nav, main, footer.foot {
 
   /* מקום בתחתית, כדי שהשורה האחרונה לא תוסתר מאחורי כפתור הצ'אט וחץ החזרה למעלה */
   .foot { padding-bottom: 6rem; }
+}
+
+/* ---------- טלפון: ליטוש אחרי סקירת עיצוב ---------- */
+
+@media (max-width: 640px) {
+  /* פתיחה: הגרף קרוב יותר לכותרת, ותוויות שנקראות (24 יחידות ב-viewBox הן כ-14px על המסך) */
+  .hero-grid { gap: 1.5rem; }
+  .hero-actions { margin-top: 1.75rem; }
+  .hero-note { margin-top: 1.25rem; }
+  .chart .annot { font-size: 24px; }
+
+  /* כפתורי הפעולה הראשיים ברוחב מלא, נוחים לאגודל ועקביים בכל העמוד */
+  .story-cta .btn,
+  #lead-form [type="submit"] { width: 100%; }
+
+  /* טופס: הודעת התנאים מצומצמת, ותיבות סימון בגודל נוח למגע */
+  .gate { margin-top: 1.25rem; padding: 0.9rem 1rem; font-size: 0.88rem; }
+  .consent { gap: 0.85rem; }
+  .consent input { width: 1.45rem; height: 1.45rem; margin-top: 0.15rem; }
+}
+
+/* "מה שלא תשמעו מאיתנו": במחשב הכול פתוח וזה נראה כמו רשימה רגילה; בטלפון רואים
+ * רק את הטענה, ונגיעה פותחת את ההסבר (main.js קובע open לפי רוחב המסך). */
+.myth summary {
+  display: inline;
+  list-style: none;
+  cursor: default;
+}
+
+.myth summary b::after {
+  content: " ";
+}
+
+.myth summary::-webkit-details-marker {
+  display: none;
+}
+
+.myth p {
+  display: inline;
+}
+
+@media (max-width: 640px) {
+  .refuse ul { gap: 0; }
+  .refuse li { border-top: var(--rule); }
+  .refuse li:first-child { border-top: 0; }
+
+  .myth summary {
+    display: block;
+    position: relative;
+    cursor: pointer;
+    padding: 0.85rem 0 0.85rem 2rem;
+  }
+
+  .myth summary::after {
+    content: "+";
+    position: absolute;
+    inset-inline-end: 0;
+    top: 0.75rem;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+
+  .myth[open] summary::after {
+    content: "−";
+  }
+
+  .myth p {
+    display: block;
+    padding-bottom: 0.9rem;
+  }
 }

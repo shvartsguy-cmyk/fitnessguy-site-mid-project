@@ -88,6 +88,8 @@ if (chat && chatForm) {
     lastFocus = document.activeElement;
     chat.hidden = false;
     chatDock.hidden = true;
+    // בטלפון הצ'אט פותח מסך מלא; המחלקה נועלת את הגלילה של העמוד מאחוריו
+    document.documentElement.classList.add("chat-is-open");
     if (!chatLog.childElementCount) {
       addMessage(
         "שלום! אני FitnessBot. אפשר לשאול אותי על מסלולים ומחירים, מדיניות ביטול והקפאה, תזונה ותוספים, או טכניקה של תרגילים.",
@@ -100,6 +102,7 @@ if (chat && chatForm) {
   function closeChat() {
     chat.hidden = true;
     chatDock.hidden = false;
+    document.documentElement.classList.remove("chat-is-open");
     if (lastFocus) lastFocus.focus();
   }
 
@@ -151,8 +154,13 @@ if (chatDock) {
   updateDock();
 }
 
+// בטקסט עברי הדפדפן הופך טווחים ("3–5" מוצג כ-"5–3"). תווי LRI/PDI הבלתי נראים
+// מציגים את הטווח עצמו משמאל לימין, בלי לשבור את המשפט סביבו.
+const RANGE_RE = /(?<![\d⁦])(\d(?:[\d.,:]*\d)?\s?[–-]\s?\d(?:[\d.,:]*\d)?)(?![\d⁩])/g;
+const isolateRanges = (text) => String(text).replace(RANGE_RE, "⁦$1⁩");
+
 function renderReply(bubble, payload) {
-  bubble.textContent = payload.reply;
+  bubble.textContent = isolateRanges(payload.reply);
   const link = payload.link;
   if (link && typeof link.href === "string" && link.href.startsWith("technique.html#")) {
     const a = document.createElement("a");
@@ -594,4 +602,24 @@ if (tracksEl) {
   };
   carouselMq.addEventListener("change", syncCarousel);
   syncCarousel();
+}
+
+/* ---------- "מה שלא תשמעו מאיתנו": מתקפל רק בטלפון ---------- */
+
+const myths = [...document.querySelectorAll(".myth")];
+
+if (myths.length) {
+  const phoneMq = window.matchMedia("(max-width: 640px)");
+  const syncMyths = () => {
+    myths.forEach((d) => {
+      d.open = !phoneMq.matches;
+      // במחשב זו רשימה רגילה: בלי עצירה במקלדת על הכותרת
+      d.querySelector("summary").tabIndex = phoneMq.matches ? 0 : -1;
+    });
+  };
+  myths.forEach((d) => d.querySelector("summary").addEventListener("click", (e) => {
+    if (!phoneMq.matches) e.preventDefault();
+  }));
+  phoneMq.addEventListener("change", syncMyths);
+  syncMyths();
 }
