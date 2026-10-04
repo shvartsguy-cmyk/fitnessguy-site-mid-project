@@ -976,11 +976,70 @@ section {
   gap: 0.6rem;
 }
 
+.foot-bottom {
+  display: grid;
+  gap: 0.3rem;
+  margin-top: 2.5rem;
+}
+
 .foot small {
   display: block;
-  margin-top: 2.5rem;
   color: var(--bone-dim);
   font-size: 0.86rem;
+}
+
+.foot-contact {
+  margin-top: 0.4rem;
+  font-size: 0.95rem;
+}
+
+/* כותרות הטורים מופיעות רק בטלפון, שם הטורים צריכים הסבר; במחשב הסידור ברור בלי */
+.foot-head {
+  display: none;
+  margin: 0 0 0.4rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  color: var(--iron);
+}
+
+/* טלפון: פרטי העסק בשורה מלאה, מתחתם שני טורים שמתחילים באותו גובה, ושורה תחתונה נפרדת */
+@media (max-width: 640px) {
+  .foot-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem 1rem;
+  }
+
+  .foot-brand {
+    grid-column: 1 / -1;
+    padding-bottom: 1.5rem;
+    border-bottom: var(--rule);
+  }
+
+  .foot-head {
+    display: block;
+  }
+
+  .foot ul {
+    gap: 0;
+  }
+
+  /* כ-40px גובה לכל קישור, כדי שלא ילחץ השכן בטעות */
+  .foot ul a {
+    display: block;
+    padding-block: 0.45rem;
+  }
+
+  .foot-bottom {
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
+    border-top: var(--rule);
+  }
+
+  .foot small {
+    font-size: 0.8rem;
+  }
 }
 
 /* ---------- חזרה לראש העמוד ---------- */
