@@ -433,9 +433,10 @@ section {
 .stats-in strong { font-family: var(--display); font-weight: 900; font-size: clamp(3.2rem, 2.4rem + 3.2vw, 4.8rem); line-height: 1.05; color: var(--accent); }
 .stats-in span { color: var(--bone-dim); font-size: clamp(1.05rem, 0.95rem + 0.4vw, 1.2rem); }
 @media (max-width: 640px) {
-  .stats-in { grid-template-columns: 1fr; gap: 1.1rem; }
-  .stats-in strong { font-size: 2.4rem; }
-  .stats-in span { font-size: 0.95rem; }
+  /* שורה אחת של שלושה, במקום שלוש שורות שתופסות מסך שלם */
+  .stats-in { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0.75rem; }
+  .stats-in strong { font-size: 1.9rem; }
+  .stats-in span { font-size: 0.8rem; line-height: 1.35; }
 }
 
 /* ---------- השיטה ---------- */
@@ -1445,4 +1446,114 @@ header.nav, main, footer.foot {
 
 #main:focus {
   outline: none;
+}
+
+/* ---------- מסלולים: קרוסלה בטלפון ובטאבלט ---------- */
+
+/* מתחת ל-880px המסלולים נערמים אחד מתחת לשני (כ-1,400px בטלפון). במקום זה: החלקה
+ * לרוחב עם scroll-snap. כל כרטיס ב-85% מהרוחב, כדי שקצה הכרטיס הבא יציץ ויראה שיש עוד.
+ * הנקודות נבנות ב-main.js. */
+.tracks-dots {
+  display: none;
+}
+
+@media (max-width: 879px) {
+  .tracks {
+    display: flex;
+    gap: 0.75rem;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    background: none;
+    border: 0;
+    margin-inline: calc(var(--gut) * -1);
+    padding-inline: var(--gut);
+    scroll-padding-inline: var(--gut);
+  }
+
+  .tracks::-webkit-scrollbar {
+    display: none;
+  }
+
+  .tracks:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 4px;
+  }
+
+  .track {
+    flex: 0 0 85%;
+    scroll-snap-align: start;
+    border: var(--rule);
+  }
+
+  .tracks-dots {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    margin-top: 1rem;
+  }
+
+  /* אזור לחיצה של 32px סביב נקודה של 10px */
+  .tracks-dots button {
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    background: none;
+    border: 0;
+    cursor: pointer;
+  }
+
+  .tracks-dots button::before {
+    content: "";
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    border: 1px solid var(--iron);
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+  }
+
+  .tracks-dots button[aria-current="true"]::before {
+    background: var(--accent);
+    border-color: var(--accent);
+  }
+
+  .tracks-dots button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: -4px;
+  }
+}
+
+/* ---------- טלפון: גדלי טקסט וצפיפות ---------- */
+
+/* הגדלים הבסיסיים נבנו לטאבלט ומעלה. בטלפון הם יצאו גדולים מדי (טקסט 16px, כותרות 29px,
+ * כותרת ראשית 35px), ולכן כאן הם קטנים לגודל של אתר מובייל. במחשב שום דבר לא משתנה. */
+@media (max-width: 640px) {
+  body { font-size: 0.94rem; line-height: 1.7; }
+  .lede { font-size: 1rem; margin-top: 1rem; }
+  h1 { font-size: 1.9rem; }
+  h2 { font-size: 1.55rem; }
+  h3 { font-size: 1.1rem; }
+  section { padding-block: 2.75rem; }
+
+  /* כותרת עליונה: שם בשורה אחת וכפתור קטן בשורה אחת, במקום ריבוע של שתי שורות */
+  .nav-in { gap: 0.6rem; padding-block: 0.6rem; }
+  .brand { gap: 0.5rem; font-size: 0.95rem; white-space: nowrap; }
+  .brand img { width: 32px; height: 32px; }
+  .nav-toggle { padding: 0.5rem 0.6rem; margin-inline-start: auto; }
+  .nav-cta { padding: 0.5rem 0.85rem; font-size: 0.85rem; white-space: nowrap; }
+
+  /* "מה אנחנו מודדים": המספר מעל הטקסט, במקום טור טקסט צר של 130px */
+  .spec { grid-template-columns: 1fr; gap: 0.35rem; padding-block: 1.25rem; }
+  .spec dt { font-size: 1.6rem; }
+  .calc { max-width: none; }
+  .refuse { padding: 1.4rem 1.25rem; }
+
+  .track p,
+  .track ul { font-size: 0.92rem; }
+
+  /* מקום בתחתית, כדי שהשורה האחרונה לא תוסתר מאחורי כפתור הצ'אט וחץ החזרה למעלה */
+  .foot { padding-bottom: 6rem; }
 }

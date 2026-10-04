@@ -546,3 +546,52 @@ if (storyFilm && storyVideo && storyToggle) {
     else if (!entry.isIntersecting) storyVideo.pause();
   }, { threshold: 0.4 }).observe(storyFilm);
 }
+
+/* ---------- מסלולים: נקודות הקרוסלה ---------- */
+
+const tracksEl = document.querySelector(".tracks");
+
+if (tracksEl) {
+  const cards = [...tracksEl.querySelectorAll(".track")];
+  const dots = document.createElement("div");
+  dots.className = "tracks-dots";
+  dots.setAttribute("role", "group");
+  dots.setAttribute("aria-label", "בחירת מסלול");
+
+  const buttons = cards.map((card, i) => {
+    const b = document.createElement("button");
+    b.type = "button";
+    b.setAttribute("aria-label", `מסלול ${i + 1} מתוך ${cards.length}: ${card.querySelector("h3").textContent}`);
+    // scrollIntoView ולא scrollLeft, כי ב-RTL הסימן של scrollLeft שונה בין דפדפנים
+    b.addEventListener("click", () => card.scrollIntoView({
+      behavior: prefersReduced ? "auto" : "smooth", inline: "start", block: "nearest",
+    }));
+    dots.appendChild(b);
+    return b;
+  });
+  tracksEl.after(dots);
+
+  const setCurrent = (i) => buttons.forEach((b, j) => b.setAttribute("aria-current", String(i === j)));
+  setCurrent(0);
+
+  const tracksObserver = new IntersectionObserver((entries) => {
+    entries.forEach((e) => { if (e.isIntersecting) setCurrent(cards.indexOf(e.target)); });
+  }, { root: tracksEl, threshold: 0.6 });
+  cards.forEach((card) => tracksObserver.observe(card));
+
+  // כשזו קרוסלה (מתחת ל-880px), אפשר להגיע אליה במקלדת ולגלול בחצים; במחשב היא טבלה רגילה
+  const carouselMq = window.matchMedia("(max-width: 879px)");
+  const syncCarousel = () => {
+    if (carouselMq.matches) {
+      tracksEl.tabIndex = 0;
+      tracksEl.setAttribute("role", "region");
+      tracksEl.setAttribute("aria-label", "שלושת המסלולים, החליקו לרוחב");
+    } else {
+      tracksEl.removeAttribute("tabindex");
+      tracksEl.removeAttribute("role");
+      tracksEl.removeAttribute("aria-label");
+    }
+  };
+  carouselMq.addEventListener("change", syncCarousel);
+  syncCarousel();
+}
